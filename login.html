@@ -1,0 +1,258 @@
+<!doctype html>
+<html lang="en" data-theme="dark">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Sign In • NEO Pulse - Enterprise Engagement Portal</title>
+
+    <!-- External Fonts & Icons -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Plus+Jakarta+Sans:wght@500;600;700;800&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
+    />
+
+    <!-- Core App Stylesheets -->
+    <link rel="stylesheet" href="css/adminator.css" />
+    <link rel="stylesheet" href="css/components.css" />
+
+    <!-- Auth Guard (Redirects to dashboard.html if already logged in) -->
+    <script src="js/auth-guard.js"></script>
+  </head>
+  <body>
+    <!-- Full Viewport Corporate Authentication Screen -->
+    <div class="auth-wrapper">
+      <div class="auth-card">
+        <div class="auth-brand">
+          <div class="auth-brand-icon">
+            <i class="fa-solid fa-bolt-lightning"></i>
+          </div>
+          <h2 class="auth-title">Adminator Pulse</h2>
+          <p class="auth-subtitle">
+            Enterprise Employee Engagement & Analytics Portal
+          </p>
+        </div>
+
+        <!-- Quick 1-Click Demo Personas -->
+        <div class="demo-personas-section">
+          <div class="demo-personas-header">
+            <i class="fa-solid fa-id-badge"></i> Quick Demo Access (1-Click Sign
+            In)
+          </div>
+          <div class="demo-personas-grid">
+            <button
+              class="demo-persona-btn"
+              id="demoUser1"
+              title="Sign in as Alex Vance (Head of People Ops)"
+            >
+              <img
+                src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=100&auto=format&fit=crop&q=80"
+                alt="Alex"
+                class="demo-avatar"
+              />
+              <span class="demo-persona-name">Alex Vance</span>
+              <span class="demo-persona-role">Head of People</span>
+            </button>
+
+            <button
+              class="demo-persona-btn"
+              id="demoUser2"
+              title="Sign in as Sarah Jenkins (Lead DevOps)"
+            >
+              <img
+                src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=100&auto=format&fit=crop&q=80"
+                alt="Sarah"
+                class="demo-avatar"
+              />
+              <span class="demo-persona-name">Sarah Jenkins</span>
+              <span class="demo-persona-role">Lead DevOps</span>
+            </button>
+
+            <button
+              class="demo-persona-btn"
+              id="demoUser3"
+              title="Sign in as Maya Lin (Lead Designer)"
+            >
+              <img
+                src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=100&auto=format&fit=crop&q=80"
+                alt="Maya"
+                class="demo-avatar"
+              />
+              <span class="demo-persona-name">Maya Lin</span>
+              <span class="demo-persona-role">Lead Designer</span>
+            </button>
+          </div>
+        </div>
+
+        <div class="auth-divider">Or continue with work email</div>
+
+        <!-- Traditional Login Form -->
+        <form id="standaloneLoginForm">
+          <div class="auth-form-group">
+            <label class="auth-label" for="loginEmail"
+              >Work Email Address</label
+            >
+            <div class="auth-input-wrapper">
+              <i class="fa-regular fa-envelope input-icon"></i>
+              <input
+                type="email"
+                id="loginEmail"
+                value="alex.vance@enterprise.io"
+                required
+                placeholder="name@company.com"
+              />
+            </div>
+          </div>
+
+          <div class="auth-form-group">
+            <label class="auth-label" for="loginPassword">Password</label>
+            <div class="auth-input-wrapper">
+              <i class="fa-solid fa-lock input-icon"></i>
+              <input
+                type="password"
+                id="loginPassword"
+                value="••••••••••••"
+                required
+                placeholder="Enter password"
+              />
+              <span class="toggle-password-btn" id="togglePasswordBtn"
+                ><i class="fa-solid fa-eye"></i
+              ></span>
+            </div>
+          </div>
+
+          <div class="auth-options-row">
+            <label class="remember-label">
+              <input
+                type="checkbox"
+                id="rememberMe"
+                checked
+                style="width: 15px; height: 15px"
+              />
+              <span>Remember device</span>
+            </label>
+            <a
+              href="#"
+              onclick="
+                alert('Password reset link sent to registered email.');
+                return false;
+              "
+              >Forgot password?</a
+            >
+          </div>
+
+          <button
+            type="submit"
+            class="btn btn-primary"
+            style="width: 100%; padding: 0.75rem; font-size: 0.92rem"
+          >
+            <i class="fa-solid fa-arrow-right-to-bracket"></i> Sign In to Portal
+          </button>
+        </form>
+
+        <!-- Enterprise SSO Options -->
+        <div
+          style="
+            margin-top: 1.5rem;
+            display: flex;
+            gap: 0.5rem;
+            justify-content: center;
+          "
+        >
+          <button
+            class="btn btn-sm btn-secondary"
+            onclick="simulateSso('Google Workspace')"
+            title="Google Workspace SSO"
+          >
+            <i class="fa-brands fa-google"></i> Google
+          </button>
+          <button
+            class="btn btn-sm btn-secondary"
+            onclick="simulateSso('Microsoft 365')"
+            title="Microsoft 365 SSO"
+          >
+            <i class="fa-brands fa-microsoft"></i> Microsoft
+          </button>
+          <button
+            class="btn btn-sm btn-secondary"
+            onclick="simulateSso('Okta SSO')"
+            title="Okta SSO"
+          >
+            <i class="fa-solid fa-shield-halved"></i> Okta
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Toast Notification Container -->
+    <div class="toast-container" id="toastContainer"></div>
+
+    <!-- Scripts -->
+    <script src="js/sample-data.js"></script>
+    <script src="js/app.js"></script>
+    <script>
+      document.addEventListener("DOMContentLoaded", () => {
+        // 1-Click Demo Login Handlers
+        document.getElementById("demoUser1")?.addEventListener("click", () => {
+          AuthGuard.login(SampleData.demoUsers[0]);
+        });
+        document.getElementById("demoUser2")?.addEventListener("click", () => {
+          AuthGuard.login(SampleData.demoUsers[1]);
+        });
+        document.getElementById("demoUser3")?.addEventListener("click", () => {
+          AuthGuard.login(SampleData.demoUsers[2]);
+        });
+
+        // Form Submit Login
+        const form = document.getElementById("standaloneLoginForm");
+        form?.addEventListener("submit", (e) => {
+          e.preventDefault();
+          const email = document.getElementById("loginEmail").value.trim();
+          const matched = SampleData.demoUsers.find(
+            (u) => u.email.toLowerCase() === email.toLowerCase(),
+          ) || {
+            id: `user-${Date.now()}`,
+            name: email
+              .split("@")[0]
+              .replace(/\./g, " ")
+              .replace(/\b\w/g, (c) => c.toUpperCase()),
+            email: email,
+            role: "Enterprise Team Member",
+            avatar:
+              "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=100&auto=format&fit=crop&q=80",
+            department: "Operations",
+            status: "Online",
+          };
+          AuthGuard.login(matched);
+        });
+
+        // Eye Password Toggle
+        const toggleBtn = document.getElementById("togglePasswordBtn");
+        const passInput = document.getElementById("loginPassword");
+        toggleBtn?.addEventListener("click", () => {
+          const isPass = passInput.getAttribute("type") === "password";
+          passInput.setAttribute("type", isPass ? "text" : "password");
+          toggleBtn.innerHTML = isPass
+            ? '<i class="fa-solid fa-eye-slash"></i>'
+            : '<i class="fa-solid fa-eye"></i>';
+        });
+      });
+
+      function simulateSso(provider) {
+        App.showToast(
+          "SSO Authentication",
+          `Handshake established with ${provider}. Signing in...`,
+          "info",
+        );
+        setTimeout(() => {
+          AuthGuard.login(SampleData.demoUsers[0]);
+        }, 700);
+      }
+    </script>
+  </body>
+</html>

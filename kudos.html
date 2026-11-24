@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Team and social • Adminator Pulse</title>
+
+  <!-- External Fonts & Icons -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Plus+Jakarta+Sans:wght@500;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+
+  <!-- Core App Stylesheets -->
+  <link rel="stylesheet" href="css/adminator.css" />
+  <link rel="stylesheet" href="css/components.css" />
+
+  <!-- Auth Guard (Enforces authentication before loading page) -->
+  <script src="js/auth-guard.js"></script>
+
+  <!-- Canvas Confetti -->
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.2/dist/confetti.browser.min.js"></script>
+</head>
+<body>
+  <div class="app-container">
+
+    <!-- 1. Left Navigation Sidebar -->
+    <aside class="app-sidebar" id="appSidebar">
+      <div class="sidebar-brand">
+        <a href="dashboard.html" class="brand-link">
+          <div class="brand-icon"><i class="fa-solid fa-bolt-lightning"></i></div>
+          <div class="brand-title">
+            <span class="title-main">ADMINATOR</span>
+            <span class="title-sub">ENGAGEMENT PULSE</span>
+          </div>
+        </a>
+        <button class="sidebar-collapse-btn" id="sidebarCollapseBtn" title="Toggle Sidebar">
+          <i class="fa-solid fa-bars-staggered"></i>
+        </button>
+      </div>
+
+      <nav class="sidebar-menu">
+        <div class="menu-category">Executive Insights</div>
+
+        <a href="dashboard.html" class="menu-item">
+          <i class="fa-solid fa-gauge-high"></i>
+          <span class="menu-label">Dashboard</span>
+          <span class="menu-badge badge-pulse">Live</span>
+        </a>
+
+        <a href="analytics.html" class="menu-item">
+          <i class="fa-solid fa-chart-pie"></i>
+          <span class="menu-label">Document Analytics</span>
+          <span class="menu-badge badge-hot">Studio</span>
+        </a>
+
+        <a href="surveys.html" class="menu-item">
+          <i class="fa-solid fa-clipboard-question"></i>
+          <span class="menu-label">Review and survey</span>
+          <span class="menu-badge">3 Open</span>
+        </a>
+
+        <a href="kudos.html" class="menu-item active">
+          <i class="fa-solid fa-award"></i>
+          <span class="menu-label">Team and social</span>
+          <span class="menu-badge">Feed</span>
+        </a>
+
+        <a href="calendar.html" class="menu-item">
+          <i class="fa-regular fa-calendar-days"></i>
+          <span class="menu-label">Calendar & Meetings</span>
+          <span class="menu-badge" style="background: rgba(37, 99, 235, 0.2); color: var(--primary);">Sync</span>
+        </a>
+
+        <div class="menu-category">Organization & People</div>
+
+        <a href="directory.html" class="menu-item">
+          <i class="fa-solid fa-users-viewfinder"></i>
+          <span class="menu-label">Team Directory</span>
+        </a>
+
+        <a href="settings.html" class="menu-item">
+          <i class="fa-solid fa-sliders"></i>
+          <span class="menu-label">Settings</span>
+        </a>
+      </nav>
+
+      <div class="sidebar-footer">
+        <div class="sidebar-user-card" onclick="window.location.href='settings.html'">
+          <div class="user-avatar-wrap">
+            <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=100&auto=format&fit=crop&q=80" alt="Avatar" class="user-avatar" />
+            <div class="user-status-dot"></div>
+          </div>
+          <div class="user-info">
+            <span class="user-name">Alex Vance</span>
+            <span class="user-role">Head of People Ops</span>
+          </div>
+        </div>
+      </div>
+    </aside>
+
+    <!-- 2. Main Application Area -->
+    <main class="app-main">
+
+      <header class="app-header">
+        <div class="header-left">
+          <button class="sidebar-toggle-btn d-md-none" id="mobileSidebarToggle" title="Open Menu">
+            <i class="fa-solid fa-bars"></i>
+          </button>
+          <div class="header-search" data-open-palette style="cursor: pointer;">
+            <i class="fa-solid fa-magnifying-glass"></i>
+            <input type="text" placeholder="Search metrics, surveys, team, schedule..." readonly />
+            <span class="search-shortcut">Ctrl + K</span>
+          </div>
+        </div>
+
+        <div class="header-right">
+          <div class="theme-switch-btn" id="themeSwitchBtn" title="Toggle Dark/Light Mode">
+            <div class="theme-switch-thumb"><i class="fa-solid fa-moon"></i></div>
+          </div>
+
+          <a href="analytics.html" class="btn btn-sm btn-primary">
+            <i class="fa-solid fa-cloud-arrow-up"></i> Upload Doc
+          </a>
+
+          <!-- Notifications Center Menu (Red dot visible ONLY when there is an unread alert) -->
+          <div class="notification-menu-container">
+            <button class="header-action-btn" id="notificationsBellBtn" title="Notifications">
+              <i class="fa-regular fa-bell"></i>
+              <span class="badge-dot" id="notificationDot"></span>
+            </button>
+            <div class="notifications-dropdown" id="notificationsDropdown">
+              <div class="notifications-dropdown-header">
+                <div style="display: flex; align-items: center; gap: 0.5rem;">
+                  <h4 style="margin: 0;">Notifications</h4>
+                  <span class="card-badge" id="notificationsUnreadCountBadge" style="font-size: 0.68rem; padding: 0.1rem 0.4rem;">0 new</span>
+                </div>
+                <button class="mark-read-btn" id="markAllNotificationsReadBtn">Mark all as read</button>
+              </div>
+              <div class="notifications-list" id="notificationsListContainer">
+                <!-- Dynamically populated by NotificationCenter in app.js -->
+              </div>
+            </div>
+          </div>
+
+          <div class="user-profile-menu-container">
+            <div class="user-avatar-wrap" id="headerProfileBtn" style="cursor: pointer;">
+              <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=100&auto=format&fit=crop&q=80" alt="User" class="user-avatar" style="width: 36px; height: 36px; border-radius: 50%; object-fit: cover;" />
+            </div>
+
+            <div class="user-profile-dropdown" id="headerProfileDropdown">
+              <div class="dropdown-user-header">
+                <h4 class="user-name">Alex Vance</h4>
+                <span id="dropdownUserEmail">alex.vance@enterprise.io</span>
+              </div>
+              <a href="directory.html" class="dropdown-item"><i class="fa-regular fa-user"></i> My Directory Profile</a>
+              <a href="calendar.html" class="dropdown-item"><i class="fa-regular fa-calendar-check"></i> My Schedule</a>
+              <a href="settings.html" class="dropdown-item"><i class="fa-solid fa-sliders"></i> Portal Settings</a>
+              <div class="dropdown-item text-danger logout-trigger-btn" style="border-top: 1px solid var(--border-color); margin-top: 0.25rem;">
+                <i class="fa-solid fa-arrow-right-from-bracket"></i> Sign Out
+              </div>
+            </div>
+          </div>
+        </div>
+      </header>
+
+      <div class="app-content">
+        <div class="page-header">
+          <div class="page-title-box">
+            <div class="page-breadcrumbs">
+              <a href="dashboard.html">Adminator</a>
+              <i class="fa-solid fa-chevron-right" style="font-size: 0.6rem;"></i>
+              <span>Team and social</span>
+            </div>
+            <h1 class="page-title">Team and Social Recognition Wall</h1>
+            <p class="page-subtitle">Celebrate team wins, company core values, and peer appreciation in real time.</p>
+          </div>
+          <div class="page-header-actions">
+            <button class="btn btn-primary" id="openSendKudosHeroBtn">
+              <i class="fa-solid fa-sparkles"></i> Give Kudos
+            </button>
+          </div>
+        </div>
+
+        <!-- Kudos Feed Cards -->
+        <div class="kudos-feed" id="kudosFeedContainer"></div>
+
+      </div>
+    </main>
+  </div>
+
+  <!-- Send Kudos Modal -->
+  <div class="modal-overlay" id="sendKudosModal">
+    <div class="modal-container">
+      <div class="modal-header">
+        <h3 class="modal-title"><i class="fa-solid fa-gift" style="color: var(--primary); margin-right: 0.5rem;"></i> Recognize a Teammate</h3>
+        <button class="modal-close-btn" id="closeSendKudosModal"><i class="fa-solid fa-xmark"></i></button>
+      </div>
+      <form id="sendKudosForm">
+        <div class="modal-body">
+          <div style="margin-bottom: 1.15rem;">
+            <label style="display: block; font-size: 0.8rem; font-weight: 700; margin-bottom: 0.4rem;">Select Teammate</label>
+            <select id="kudosRecipientSelect" style="width: 100%;" required></select>
+          </div>
+
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1.15rem;">
+            <div>
+              <label style="display: block; font-size: 0.8rem; font-weight: 700; margin-bottom: 0.4rem;">Badge of Honor</label>
+              <select id="kudosBadgeSelect" style="width: 100%;">
+                <option value="🎨 Creative Spark">🎨 Creative Spark</option>
+                <option value="🚀 Mission Critical">🚀 Mission Critical</option>
+                <option value="🌟 Customer Champion">🌟 Customer Champion</option>
+                <option value="🤝 Empathy Award">🤝 Empathy Award</option>
+                <option value="⚡ Velocity Master">⚡ Velocity Master</option>
+              </select>
+            </div>
+            <div>
+              <label style="display: block; font-size: 0.8rem; font-weight: 700; margin-bottom: 0.4rem;">Core Value Tag</label>
+              <select id="kudosValueSelect" style="width: 100%;">
+                <option value="#Innovation">#Innovation</option>
+                <option value="#Teamwork">#Teamwork</option>
+                <option value="#CustomerFirst">#CustomerFirst</option>
+                <option value="#Collaboration">#Collaboration</option>
+                <option value="#Leadership">#Leadership</option>
+              </select>
+            </div>
+          </div>
+
+          <div>
+            <label style="display: block; font-size: 0.8rem; font-weight: 700; margin-bottom: 0.4rem;">Your Praise Message</label>
+            <textarea id="kudosMessageInput" rows="3" placeholder="What extraordinary thing did they accomplish?" style="width: 100%; resize: vertical;" required></textarea>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" onclick="document.getElementById('sendKudosModal').classList.remove('active')">Cancel</button>
+          <button type="submit" class="btn btn-primary"><i class="fa-solid fa-paper-plane"></i> Share Kudos</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Command Palette Modal (Ctrl+K) -->
+  <div class="modal-overlay" id="commandPaletteModal">
+    <div class="command-palette">
+      <div class="palette-search-box">
+        <i class="fa-solid fa-magnifying-glass"></i>
+        <input type="text" id="commandPaletteInput" placeholder="Type a view, action, or command..." autocomplete="off" />
+        <span class="search-shortcut">ESC to close</span>
+      </div>
+      <div class="palette-results-list" id="paletteResults"></div>
+    </div>
+  </div>
+
+  <!-- Toast Notification Container -->
+  <div class="toast-container" id="toastContainer"></div>
+
+  <!-- Application Scripts -->
+  <script src="js/sample-data.js"></script>
+  <script src="js/kudos.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>

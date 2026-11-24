@@ -1,0 +1,417 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Document Analytics Studio • Adminator Pulse</title>
+
+  <!-- External Fonts & Icons -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Plus+Jakarta+Sans:wght@500;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+
+  <!-- Core App Stylesheets -->
+  <link rel="stylesheet" href="css/adminator.css" />
+  <link rel="stylesheet" href="css/components.css" />
+
+  <!-- Auth Guard (Enforces authentication before loading page) -->
+  <script src="js/auth-guard.js"></script>
+
+  <!-- High-Performance Client-Side CDN Libraries -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+</head>
+<body>
+  <div class="app-container">
+
+    <!-- 1. Left Navigation Sidebar -->
+    <aside class="app-sidebar" id="appSidebar">
+      <div class="sidebar-brand">
+        <a href="dashboard.html" class="brand-link">
+          <div class="brand-icon"><i class="fa-solid fa-bolt-lightning"></i></div>
+          <div class="brand-title">
+            <span class="title-main">ADMINATOR</span>
+            <span class="title-sub">ENGAGEMENT PULSE</span>
+          </div>
+        </a>
+        <button class="sidebar-collapse-btn" id="sidebarCollapseBtn" title="Toggle Sidebar">
+          <i class="fa-solid fa-bars-staggered"></i>
+        </button>
+      </div>
+
+      <nav class="sidebar-menu">
+        <div class="menu-category">Executive Insights</div>
+
+        <a href="dashboard.html" class="menu-item">
+          <i class="fa-solid fa-gauge-high"></i>
+          <span class="menu-label">Dashboard</span>
+          <span class="menu-badge badge-pulse">Live</span>
+        </a>
+
+        <a href="analytics.html" class="menu-item active">
+          <i class="fa-solid fa-chart-pie"></i>
+          <span class="menu-label">Document Analytics</span>
+          <span class="menu-badge badge-hot">Studio</span>
+        </a>
+
+        <a href="surveys.html" class="menu-item">
+          <i class="fa-solid fa-clipboard-question"></i>
+          <span class="menu-label">Review and survey</span>
+          <span class="menu-badge">3 Open</span>
+        </a>
+
+        <a href="kudos.html" class="menu-item">
+          <i class="fa-solid fa-award"></i>
+          <span class="menu-label">Team and social</span>
+          <span class="menu-badge">Feed</span>
+        </a>
+
+        <a href="calendar.html" class="menu-item">
+          <i class="fa-regular fa-calendar-days"></i>
+          <span class="menu-label">Calendar & Meetings</span>
+          <span class="menu-badge" style="background: rgba(37, 99, 235, 0.2); color: var(--primary);">Sync</span>
+        </a>
+
+        <div class="menu-category">Organization & People</div>
+
+        <a href="directory.html" class="menu-item">
+          <i class="fa-solid fa-users-viewfinder"></i>
+          <span class="menu-label">Team Directory</span>
+        </a>
+
+        <a href="settings.html" class="menu-item">
+          <i class="fa-solid fa-sliders"></i>
+          <span class="menu-label">Settings</span>
+        </a>
+      </nav>
+
+      <div class="sidebar-footer">
+        <div class="sidebar-user-card" onclick="window.location.href='settings.html'">
+          <div class="user-avatar-wrap">
+            <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=100&auto=format&fit=crop&q=80" alt="Avatar" class="user-avatar" />
+            <div class="user-status-dot"></div>
+          </div>
+          <div class="user-info">
+            <span class="user-name">Alex Vance</span>
+            <span class="user-role">Head of People Ops</span>
+          </div>
+        </div>
+      </div>
+    </aside>
+
+    <!-- 2. Main Application Area -->
+    <main class="app-main">
+
+      <header class="app-header">
+        <div class="header-left">
+          <button class="sidebar-toggle-btn d-md-none" id="mobileSidebarToggle" title="Open Menu">
+            <i class="fa-solid fa-bars"></i>
+          </button>
+          <div class="header-search" data-open-palette style="cursor: pointer;">
+            <i class="fa-solid fa-magnifying-glass"></i>
+            <input type="text" placeholder="Search metrics, surveys, team, schedule..." readonly />
+            <span class="search-shortcut">Ctrl + K</span>
+          </div>
+        </div>
+
+        <div class="header-right">
+          <div class="theme-switch-btn" id="themeSwitchBtn" title="Toggle Dark/Light Mode">
+            <div class="theme-switch-thumb"><i class="fa-solid fa-moon"></i></div>
+          </div>
+
+          <!-- Notifications Center Menu (Red dot visible ONLY when there is an unread alert) -->
+          <div class="notification-menu-container">
+            <button class="header-action-btn" id="notificationsBellBtn" title="Notifications">
+              <i class="fa-regular fa-bell"></i>
+              <span class="badge-dot" id="notificationDot"></span>
+            </button>
+            <div class="notifications-dropdown" id="notificationsDropdown">
+              <div class="notifications-dropdown-header">
+                <div style="display: flex; align-items: center; gap: 0.5rem;">
+                  <h4 style="margin: 0;">Notifications</h4>
+                  <span class="card-badge" id="notificationsUnreadCountBadge" style="font-size: 0.68rem; padding: 0.1rem 0.4rem;">0 new</span>
+                </div>
+                <button class="mark-read-btn" id="markAllNotificationsReadBtn">Mark all as read</button>
+              </div>
+              <div class="notifications-list" id="notificationsListContainer">
+                <!-- Dynamically populated by NotificationCenter in app.js -->
+              </div>
+            </div>
+          </div>
+
+          <div class="user-profile-menu-container">
+            <div class="user-avatar-wrap" id="headerProfileBtn" style="cursor: pointer;">
+              <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=100&auto=format&fit=crop&q=80" alt="User" class="user-avatar" style="width: 36px; height: 36px; border-radius: 50%; object-fit: cover;" />
+            </div>
+
+            <div class="user-profile-dropdown" id="headerProfileDropdown">
+              <div class="dropdown-user-header">
+                <h4 class="user-name">Alex Vance</h4>
+                <span id="dropdownUserEmail">alex.vance@enterprise.io</span>
+              </div>
+              <a href="directory.html" class="dropdown-item"><i class="fa-regular fa-user"></i> My Directory Profile</a>
+              <a href="calendar.html" class="dropdown-item"><i class="fa-regular fa-calendar-check"></i> My Schedule</a>
+              <a href="settings.html" class="dropdown-item"><i class="fa-solid fa-sliders"></i> Portal Settings</a>
+              <div class="dropdown-item text-danger logout-trigger-btn" style="border-top: 1px solid var(--border-color); margin-top: 0.25rem;">
+                <i class="fa-solid fa-arrow-right-from-bracket"></i> Sign Out
+              </div>
+            </div>
+          </div>
+        </div>
+      </header>
+
+      <div class="app-content">
+        <div class="page-header">
+          <div class="page-title-box">
+            <div class="page-breadcrumbs">
+              <a href="dashboard.html">Adminator</a>
+              <i class="fa-solid fa-chevron-right" style="font-size: 0.6rem;"></i>
+              <span>Document Analytics Studio</span>
+            </div>
+            <h1 class="page-title">Document Ingestion & Interactive Analysis Flow</h1>
+            <p class="page-subtitle">Upload Excel (.xlsx, .xls), CSV, PDF reports, or JSON. The interactive chart renders directly below with live analysis and optional PNG export.</p>
+          </div>
+        </div>
+
+        <!-- Studio Hero Banner with Instant Sample Datasets -->
+        <div class="analytics-studio-hero">
+          <div class="studio-hero-content">
+            <div class="studio-hero-text">
+              <h2><i class="fa-solid fa-wand-magic-sparkles" style="color: var(--primary);"></i> Automated Data Analysis Engine</h2>
+              <p>Drag and drop your spreadsheet or document. Our engine parses the schema, computes variance, detects dimensions, and displays the interactive chart directly below.</p>
+            </div>
+            <div class="sample-datasets-pillbox">
+              <span class="sample-datasets-label">Or load pre-configured sample dataset:</span>
+              <div class="sample-buttons-row">
+                <button class="sample-btn" data-sample-key="departmentEngagement">
+                  <i class="fa-solid fa-file-excel" style="color: #059669;"></i> Dept_Engagement.xlsx
+                </button>
+                <button class="sample-btn" data-sample-key="quarterlySentiment">
+                  <i class="fa-solid fa-file-csv" style="color: #2563eb;"></i> Sentiment_Trends.csv
+                </button>
+                <button class="sample-btn" data-sample-key="nlpCultureReport">
+                  <i class="fa-solid fa-file-pdf" style="color: #e11d48;"></i> Culture_Audit.pdf
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Drag and Drop Dropzone -->
+        <div class="dropzone-container" id="analyticsDropzone">
+          <input type="file" id="analyticsFileInput" accept=".xlsx,.xls,.csv,.pdf,.json,.txt" style="display: none;" />
+          <div class="dropzone-icon-wrap"><i class="fa-solid fa-cloud-arrow-up"></i></div>
+          <h3 class="dropzone-title">Drop your document here, or browse files</h3>
+          <p class="dropzone-subtitle">Interactive chart generates immediately below • Export PNG or CSV at any time</p>
+          <div class="supported-chips">
+            <span class="file-chip excel"><i class="fa-solid fa-file-excel"></i> .XLSX / .XLS</span>
+            <span class="file-chip csv"><i class="fa-solid fa-file-csv"></i> .CSV</span>
+            <span class="file-chip pdf"><i class="fa-solid fa-file-pdf"></i> .PDF</span>
+            <span class="file-chip json"><i class="fa-solid fa-code"></i> .JSON</span>
+          </div>
+        </div>
+
+        <!-- Data Analysis Pipeline Flow Visualizer -->
+        <div class="analysis-flow-card">
+          <div class="flow-title">
+            <i class="fa-solid fa-arrows-split-up-and-left"></i> Real-time Data Processing Pipeline
+          </div>
+          <div class="pipeline-stepper" id="pipelineStepper">
+            <div class="pipeline-step completed" id="pipeStep1">
+              <div class="step-node"><i class="fa-solid fa-file-import"></i></div>
+              <div class="step-info">
+                <span class="step-label">1. Ingestion</span>
+                <span class="step-desc">Document Buffer</span>
+              </div>
+            </div>
+            <div class="pipeline-connector active" id="pipeConn1"></div>
+
+            <div class="pipeline-step completed" id="pipeStep2">
+              <div class="step-node"><i class="fa-solid fa-wand-magic-sparkles"></i></div>
+              <div class="step-info">
+                <span class="step-label">2. Schema Cleanse</span>
+                <span class="step-desc">Type Inference</span>
+              </div>
+            </div>
+            <div class="pipeline-connector active" id="pipeConn2"></div>
+
+            <div class="pipeline-step completed" id="pipeStep3">
+              <div class="step-node"><i class="fa-solid fa-calculator"></i></div>
+              <div class="step-info">
+                <span class="step-label">3. Synthesis</span>
+                <span class="step-desc">Statistical Variance</span>
+              </div>
+            </div>
+            <div class="pipeline-connector active" id="pipeConn3"></div>
+
+            <div class="pipeline-step completed" id="pipeStep4">
+              <div class="step-node"><i class="fa-solid fa-chart-pie"></i></div>
+              <div class="step-info">
+                <span class="step-label">4. Interactive Chart</span>
+                <span class="step-desc">Rendered Below</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- File Metadata Banner -->
+        <div class="file-meta-banner" id="fileMetaBanner">
+          <div class="file-meta-left">
+            <div class="file-icon-badge" id="metaFileIcon"><i class="fa-solid fa-file-excel"></i></div>
+            <div class="file-meta-details">
+              <h4 id="metaFileName">Department_Engagement_Scores_2026.xlsx</h4>
+              <p id="metaFileDetails">7 rows analyzed • 6 data dimensions • Live interactive chart below</p>
+            </div>
+          </div>
+          <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
+            <button class="btn btn-sm btn-secondary" id="exportCsvBtn"><i class="fa-solid fa-download"></i> Export CSV</button>
+            <button class="btn btn-sm btn-primary" id="exportPngBtn"><i class="fa-solid fa-camera"></i> Save Chart as PNG Image</button>
+          </div>
+        </div>
+
+        <!-- Dynamic Analysis KPI Cards -->
+        <div class="kpi-grid" id="studioKpisGrid"></div>
+
+        <!-- PROMINENT INTERACTIVE CHART STAGE (Results available below!) -->
+        <div class="card" style="margin-bottom: 1.75rem;">
+          <!-- 1-Click Chart Mode Switcher Header -->
+          <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 0.75rem; padding: 0.85rem 1.25rem; border-bottom: 1px solid var(--border-color); background: var(--bg-surface);">
+            <div style="display: flex; align-items: center; gap: 0.65rem; flex-wrap: wrap;">
+              <span style="font-size: 0.82rem; font-weight: 700; color: var(--text-primary);"><i class="fa-solid fa-shapes" style="color: var(--primary);"></i> Chart Representation:</span>
+              <div class="chart-type-pill-group">
+                <button class="chart-type-pill active" data-type="bar" title="Vertical Bar Chart"><i class="fa-solid fa-chart-column"></i> Bar</button>
+                <button class="chart-type-pill" data-type="line" title="Continuous Line Graph"><i class="fa-solid fa-chart-line"></i> Line</button>
+                <button class="chart-type-pill" data-type="doughnut" title="Doughnut Ring Chart"><i class="fa-solid fa-circle-notch"></i> Doughnut</button>
+                <button class="chart-type-pill" data-type="polarArea" title="Pie / Polar Distribution"><i class="fa-solid fa-chart-pie"></i> Pie/Polar</button>
+                <button class="chart-type-pill" data-type="horizontalBar" title="Horizontal Ranking Bar"><i class="fa-solid fa-bars-staggered"></i> Horizontal</button>
+                <button class="chart-type-pill" data-type="radar" title="Radar Multi-Axis Chart"><i class="fa-solid fa-circle-nodes"></i> Radar</button>
+              </div>
+            </div>
+            <div style="display: flex; align-items: center; gap: 0.5rem;">
+              <button class="btn btn-sm btn-secondary" id="exportPngBtn" title="Export this interactive chart as high-res PNG">
+                <i class="fa-solid fa-download"></i> Save PNG
+              </button>
+              <button class="btn btn-sm btn-secondary" id="exportCsvBtn" title="Download cleansed CSV">
+                <i class="fa-solid fa-file-csv"></i> Save CSV
+              </button>
+            </div>
+          </div>
+
+          <!-- Deep Axis Definition Bar -->
+          <div class="chart-axis-info" style="margin: 0.85rem 1.25rem 0.25rem 1.25rem;">
+            <div class="axis-badge">
+              <strong>X-Axis</strong> <span id="studioXAxisText">Department / Category</span>
+            </div>
+            <div class="axis-badge">
+              <strong>Y-Axis</strong> <span id="studioYAxisText">Metric Value (Score / Frequency)</span>
+            </div>
+          </div>
+
+          <div class="chart-controls-bar" style="margin: 0.75rem 1.25rem 1.25rem 1.25rem;">
+            <div class="controls-group">
+              <div class="control-item">
+                <span>Chart Style:</span>
+                <select id="chartTypeSelect">
+                  <option value="bar">Vertical Bar</option>
+                  <option value="horizontalBar">Horizontal Bar</option>
+                  <option value="line">Line / Trend Area</option>
+                  <option value="doughnut">Doughnut</option>
+                  <option value="radar">Radar</option>
+                  <option value="polarArea">Polar Area</option>
+                </select>
+              </div>
+
+              <div class="control-item">
+                <span>X-Axis (Category):</span>
+                <select id="chartXAxisSelect"></select>
+              </div>
+
+              <div class="control-item">
+                <span>Y-Axis (Metric):</span>
+                <select id="chartYAxisSelect"></select>
+              </div>
+
+              <div class="control-item">
+                <span>Aggregation:</span>
+                <select id="chartAggSelect">
+                  <option value="avg">Average (Mean)</option>
+                  <option value="sum">Sum (Total)</option>
+                  <option value="count">Count (Frequency)</option>
+                  <option value="max">Maximum</option>
+                  <option value="min">Minimum</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="controls-group">
+              <div class="control-item">
+                <span>Executive Palette:</span>
+                <select id="chartPaletteSelect">
+                  <option value="sapphire">Cerulean Sapphire</option>
+                  <option value="emerald">Emerald Sage</option>
+                  <option value="teal">Teal Horizon</option>
+                  <option value="amber">Warm Amber</option>
+                </select>
+              </div>
+            </div>
+          </div>
+
+          <!-- The Live Interactive Chart Canvas -->
+          <div class="chart-canvas-container">
+            <canvas id="studioChartCanvas"></canvas>
+          </div>
+
+          <!-- Auto-Generated AI Executive Insights -->
+          <div class="ai-insights-panel">
+            <div class="insights-header">
+              <i class="fa-solid fa-brain"></i> Algorithmic Insights & Executive Takeaways
+            </div>
+            <ul class="insights-list" id="aiInsightsList"></ul>
+          </div>
+        </div>
+
+        <!-- Interactive Data Grid & Table -->
+        <div class="card">
+          <div class="card-header">
+            <div class="card-title-wrap">
+              <h3 class="card-title">Parsed Data Grid</h3>
+              <span class="card-badge" id="tableEntriesCount">Showing entries</span>
+            </div>
+            <div style="display: flex; align-items: center; gap: 0.5rem;">
+              <input type="text" id="tableSearchInput" placeholder="Filter rows in table..." style="width: 220px; font-size: 0.8rem;" />
+            </div>
+          </div>
+          <div class="data-table-wrapper">
+            <table class="custom-table">
+              <thead id="dataTableHead"></thead>
+              <tbody id="dataTableBody"></tbody>
+            </table>
+          </div>
+        </div>
+
+      </div>
+    </main>
+  </div>
+
+  <!-- Command Palette Modal (Ctrl+K) -->
+  <div class="modal-overlay" id="commandPaletteModal">
+    <div class="command-palette">
+      <div class="palette-search-box">
+        <i class="fa-solid fa-magnifying-glass"></i>
+        <input type="text" id="commandPaletteInput" placeholder="Type a view, action, or command..." autocomplete="off" />
+        <span class="search-shortcut">ESC to close</span>
+      </div>
+      <div class="palette-results-list" id="paletteResults"></div>
+    </div>
+  </div>
+
+  <!-- Toast Notification Container -->
+  <div class="toast-container" id="toastContainer"></div>
+
+  <!-- Application Scripts -->
+  <script src="js/sample-data.js"></script>
+  <script src="js/analytics-studio.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>
