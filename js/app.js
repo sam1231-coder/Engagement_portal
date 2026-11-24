@@ -1,5 +1,5 @@
 /**
- * ADMINATOR PULSE - Core Application Controller
+ * HUMANLY - Core Application Controller
  * Handles themes, responsive sidebar, top navbar, command palette (Ctrl+K),
  * Web Audio synthesizer, and toast notifications across all pages.
  */
@@ -142,6 +142,8 @@ const App = (function () {
   }
 
   const paletteCommands = [
+    { title: "Admin Console & Executive Control", category: "Admin", icon: "fa-shield-halved", action: () => (window.location.href = "admin-dashboard.html") },
+    { title: "Workforce & Role Management", category: "Admin", icon: "fa-user-gear", action: () => (window.location.href = "admin-users.html") },
     { title: "Dashboard Overview", category: "Navigation", icon: "fa-gauge", action: () => (window.location.href = "dashboard.html") },
     { title: "Document Analytics Studio", category: "Navigation", icon: "fa-chart-pie", action: () => (window.location.href = "analytics.html") },
     { title: "Review and survey", category: "Navigation", icon: "fa-clipboard-question", action: () => (window.location.href = "surveys.html") },

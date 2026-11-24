@@ -1,0 +1,390 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Admin Console • Humanly - Executive Control</title>
+
+  <!-- External Fonts & Icons -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Plus+Jakarta+Sans:wght@500;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+
+  <!-- Core App Stylesheets -->
+  <link rel="stylesheet" href="css/humanly.css" />
+  <link rel="stylesheet" href="css/components.css" />
+
+  <!-- Auth Guard (Restricts strictly to role === 'admin') -->
+  <script src="js/auth-guard.js"></script>
+</head>
+<body>
+  <div class="app-container">
+
+    <!-- 1. Left Navigation Sidebar -->
+    <aside class="app-sidebar" id="appSidebar">
+      <div class="sidebar-brand">
+        <a href="admin-dashboard.html" class="brand-link">
+          <div class="brand-icon" style="background: var(--danger);"><i class="fa-solid fa-shield-halved"></i></div>
+          <div class="brand-title">
+            <span class="title-main">HUMANLY</span>
+            <span class="title-sub" style="color: var(--danger);">ADMIN CONSOLE</span>
+          </div>
+        </a>
+        <button class="sidebar-collapse-btn" id="sidebarCollapseBtn" title="Toggle Sidebar">
+          <i class="fa-solid fa-bars-staggered"></i>
+        </button>
+      </div>
+
+      <nav class="sidebar-menu">
+        <div class="menu-category" style="color: var(--danger); font-weight: 700;">Executive Admin</div>
+
+        <a href="admin-dashboard.html" class="menu-item active">
+          <i class="fa-solid fa-sliders"></i>
+          <span class="menu-label">Executive Control</span>
+          <span class="menu-badge" style="background: var(--danger); color: #fff;">Admin</span>
+        </a>
+
+        <a href="admin-users.html" class="menu-item">
+          <i class="fa-solid fa-user-gear"></i>
+          <span class="menu-label">Workforce & Roles</span>
+          <span class="menu-badge" id="sidebarUserCountBadge">6 Users</span>
+        </a>
+
+        <div class="menu-category">Employee Experience</div>
+
+        <a href="dashboard.html" class="menu-item">
+          <i class="fa-solid fa-gauge-high"></i>
+          <span class="menu-label">Employee Portal</span>
+        </a>
+
+        <a href="analytics.html" class="menu-item">
+          <i class="fa-solid fa-chart-pie"></i>
+          <span class="menu-label">Document Analytics</span>
+          <span class="menu-badge badge-hot">Studio</span>
+        </a>
+
+        <a href="surveys.html" class="menu-item">
+          <i class="fa-solid fa-clipboard-question"></i>
+          <span class="menu-label">Review and survey</span>
+        </a>
+
+        <a href="kudos.html" class="menu-item">
+          <i class="fa-solid fa-award"></i>
+          <span class="menu-label">Team and social</span>
+        </a>
+
+        <a href="calendar.html" class="menu-item">
+          <i class="fa-regular fa-calendar-days"></i>
+          <span class="menu-label">Calendar & Meetings</span>
+        </a>
+
+        <a href="directory.html" class="menu-item">
+          <i class="fa-solid fa-users"></i>
+          <span class="menu-label">Team Directory</span>
+        </a>
+
+        <a href="settings.html" class="menu-item">
+          <i class="fa-solid fa-sliders"></i>
+          <span class="menu-label">Settings</span>
+        </a>
+      </nav>
+
+      <div class="sidebar-footer">
+        <div class="user-brief">
+          <img src="" alt="Avatar" class="user-avatar" style="width: 36px; height: 36px; border-radius: 50%; object-fit: cover; border: 2px solid var(--danger);" />
+          <div class="user-brief-info">
+            <span class="user-name">Administrator</span>
+            <span class="user-role" style="color: var(--danger);">Enterprise Admin</span>
+          </div>
+        </div>
+      </div>
+    </aside>
+
+    <!-- 2. Main Content Area -->
+    <main class="app-main">
+      <!-- Top Header Navbar -->
+      <header class="app-header">
+        <div class="header-left">
+          <button class="mobile-sidebar-toggle" id="mobileSidebarToggle" title="Open Menu">
+            <i class="fa-solid fa-bars"></i>
+          </button>
+          <div class="search-box">
+            <i class="fa-solid fa-magnifying-glass search-icon"></i>
+            <input type="text" placeholder="Search admin logs, employees, policy..." data-open-palette />
+            <span class="shortcut-tag">Ctrl + K</span>
+          </div>
+        </div>
+
+        <div class="header-right">
+          <!-- Switch to Employee View Pill -->
+          <a href="dashboard.html" class="btn btn-sm btn-secondary" title="View standard employee interface">
+            <i class="fa-solid fa-arrow-left"></i> Employee View
+          </a>
+
+          <!-- Theme Mode Switch -->
+          <div class="theme-switch-btn" id="themeSwitchBtn" title="Toggle Dark/Light Mode">
+            <div class="theme-switch-thumb">
+              <i class="fa-solid fa-moon"></i>
+            </div>
+          </div>
+
+          <!-- Notifications Center Menu -->
+          <div class="notification-menu-container">
+            <button class="header-action-btn" id="notificationsBellBtn" title="Notifications">
+              <i class="fa-regular fa-bell"></i>
+              <span class="badge-dot" id="notificationDot"></span>
+            </button>
+            <div class="notifications-dropdown" id="notificationsDropdown">
+              <div class="notifications-dropdown-header">
+                <div style="display: flex; align-items: center; gap: 0.5rem;">
+                  <h4 style="margin: 0;">Admin Alerts</h4>
+                  <span class="card-badge" id="notificationsUnreadCountBadge" style="font-size: 0.68rem; padding: 0.1rem 0.4rem;">0 new</span>
+                </div>
+                <button class="mark-read-btn" id="markAllNotificationsReadBtn">Mark all as read</button>
+              </div>
+              <div class="notifications-list" id="notificationsListContainer"></div>
+            </div>
+          </div>
+
+          <!-- User Quick Menu -->
+          <div class="user-profile-menu-container">
+            <div class="user-avatar-wrap" id="headerProfileBtn" style="cursor: pointer;">
+              <img src="" alt="User" class="user-avatar" style="width: 36px; height: 36px; border-radius: 50%; object-fit: cover; border: 2px solid var(--danger);" />
+            </div>
+
+            <div class="user-profile-dropdown" id="headerProfileDropdown">
+              <div class="dropdown-user-header">
+                <h4 class="user-name">Administrator</h4>
+                <span id="dropdownUserEmail">admin@humanly.io</span>
+              </div>
+              <a href="admin-dashboard.html" class="dropdown-item"><i class="fa-solid fa-shield-halved"></i> Admin Console</a>
+              <a href="admin-users.html" class="dropdown-item"><i class="fa-solid fa-user-gear"></i> Manage Users</a>
+              <a href="settings.html" class="dropdown-item"><i class="fa-solid fa-sliders"></i> System Settings</a>
+              <div class="dropdown-item text-danger logout-trigger-btn" style="border-top: 1px solid var(--border-color); margin-top: 0.25rem;">
+                <i class="fa-solid fa-arrow-right-from-bracket"></i> Sign Out
+              </div>
+            </div>
+          </div>
+        </div>
+      </header>
+
+      <!-- Page Content -->
+      <div class="app-content">
+        <div class="page-header" style="display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 1rem;">
+          <div class="page-title-box">
+            <div class="page-breadcrumbs">
+              <a href="admin-dashboard.html">Humanly</a>
+              <i class="fa-solid fa-chevron-right" style="font-size: 0.6rem;"></i>
+              <span>Admin Console</span>
+            </div>
+            <h1 class="page-title">Executive Control & Security Center</h1>
+            <p class="page-subtitle">Workforce governance, database telemetry, survey management, and real-time audit logs.</p>
+          </div>
+
+          <div style="display: flex; gap: 0.75rem; flex-wrap: wrap;">
+            <button class="btn btn-secondary" id="openBroadcastModalBtn">
+              <i class="fa-solid fa-bullhorn"></i> Broadcast Notice
+            </button>
+            <button class="btn btn-primary" id="openNewSurveyModalBtn">
+              <i class="fa-solid fa-plus"></i> Launch Review Campaign
+            </button>
+          </div>
+        </div>
+
+        <!-- Admin Executive KPI Cards (Loaded live from Database) -->
+        <div class="kpi-grid">
+          <!-- Total Workforce -->
+          <div class="card kpi-card" style="--accent-color: var(--primary);">
+            <div class="kpi-card-header">
+              <span class="kpi-card-title">Database Workforce</span>
+              <div class="kpi-card-icon"><i class="fa-solid fa-users"></i></div>
+            </div>
+            <div class="kpi-card-value" id="adminTotalUsers">--</div>
+            <div class="kpi-card-footer">
+              <span id="adminRoleRatio">-- Admins | -- Employees</span>
+              <a href="admin-users.html" class="trend-badge trend-up" style="text-decoration: none;">Manage</a>
+            </div>
+          </div>
+
+          <!-- Active Reviews -->
+          <div class="card kpi-card" style="--accent-color: var(--success);">
+            <div class="kpi-card-header">
+              <span class="kpi-card-title">Live Review Campaigns</span>
+              <div class="kpi-card-icon"><i class="fa-solid fa-clipboard-check"></i></div>
+            </div>
+            <div class="kpi-card-value" id="adminActiveSurveys">--</div>
+            <div class="kpi-card-footer">
+              <span>Participation Avg: <strong>92.4%</strong></span>
+              <span class="trend-badge trend-up">Compliant</span>
+            </div>
+          </div>
+
+          <!-- Total Kudos Given -->
+          <div class="card kpi-card" style="--accent-color: #d97706;">
+            <div class="kpi-card-header">
+              <span class="kpi-card-title">Recognition Volume</span>
+              <div class="kpi-card-icon"><i class="fa-solid fa-award"></i></div>
+            </div>
+            <div class="kpi-card-value" id="adminTotalKudos">--</div>
+            <div class="kpi-card-footer">
+              <span>Peer interactions logged</span>
+              <span class="trend-badge trend-up">+14% MoM</span>
+            </div>
+          </div>
+
+          <!-- Security Telemetry Events -->
+          <div class="card kpi-card" style="--accent-color: var(--danger);">
+            <div class="kpi-card-header">
+              <span class="kpi-card-title">Security & Audit Events</span>
+              <div class="kpi-card-icon"><i class="fa-solid fa-shield-virus"></i></div>
+            </div>
+            <div class="kpi-card-value" id="adminTotalAudit">--</div>
+            <div class="kpi-card-footer">
+              <span>PBKDF2 Verified</span>
+              <span class="trend-badge" style="background: rgba(21, 128, 61, 0.15); color: var(--success);">Normal</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- 2-Column Administrative Control Center -->
+        <div style="display: grid; grid-template-columns: 1.3fr 1fr; gap: 1.5rem; margin-bottom: 2rem;">
+          
+          <!-- Security & Audit Log Table (Live from DB) -->
+          <div class="card">
+            <div class="card-header">
+              <div class="card-title-wrap">
+                <h3 class="card-title"><i class="fa-solid fa-list-check" style="color: var(--primary);"></i> Security & Database Audit Log</h3>
+                <span class="card-badge">Live DB Stream</span>
+              </div>
+              <button class="btn btn-sm btn-secondary" id="refreshAuditBtn" title="Refresh Log">
+                <i class="fa-solid fa-rotate"></i>
+              </button>
+            </div>
+            <div style="max-height: 380px; overflow-y: auto;">
+              <table class="custom-table" style="font-size: 0.8rem;">
+                <thead>
+                  <tr>
+                    <th>Timestamp</th>
+                    <th>Action</th>
+                    <th>User</th>
+                    <th>Details</th>
+                  </tr>
+                </thead>
+                <tbody id="adminAuditLogBody">
+                  <tr><td colspan="4" style="text-align: center; color: var(--text-muted);">Loading audit logs...</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <!-- Active Campaigns & Fast Controls -->
+          <div class="card">
+            <div class="card-header">
+              <div class="card-title-wrap">
+                <h3 class="card-title"><i class="fa-solid fa-layer-group" style="color: var(--primary);"></i> Department Distribution</h3>
+                <span class="card-badge">Headcount</span>
+              </div>
+            </div>
+            <div id="deptDistributionList" style="display: flex; flex-direction: column; gap: 0.85rem; padding: 0.5rem 0;">
+              <!-- Populated via JS -->
+            </div>
+          </div>
+
+        </div>
+
+      </div>
+    </main>
+  </div>
+
+  <!-- Launch Review Campaign Modal -->
+  <div class="modal-overlay" id="launchSurveyModal" style="display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.7); z-index: 500; align-items: center; justify-content: center;">
+    <div class="card" style="max-width: 500px; width: 90%; max-height: 90vh; overflow-y: auto;">
+      <div class="card-header">
+        <h3 class="card-title"><i class="fa-solid fa-bullseye"></i> Launch Review Campaign</h3>
+        <button id="closeSurveyModalBtn" style="background: none; border: none; color: var(--text-muted); cursor: pointer; font-size: 1.1rem;"><i class="fa-solid fa-xmark"></i></button>
+      </div>
+      <form id="newSurveyForm" style="padding: 1.25rem;">
+        <div class="auth-form-group" style="margin-bottom: 1rem;">
+          <label style="display: block; font-size: 0.8rem; font-weight: 600; margin-bottom: 0.35rem;">Campaign Title</label>
+          <input type="text" id="surveyTitle" required placeholder="e.g. Q1 2027 Psychological Safety Review" style="width: 100%; padding: 0.65rem; background: var(--bg-input); border: 1px solid var(--border-color); border-radius: var(--radius-md); color: var(--text-primary);" />
+        </div>
+
+        <div class="auth-form-group" style="margin-bottom: 1rem;">
+          <label style="display: block; font-size: 0.8rem; font-weight: 600; margin-bottom: 0.35rem;">Category</label>
+          <select id="surveyCategory" style="width: 100%; padding: 0.65rem; background: var(--bg-surface); border: 1px solid var(--border-color); border-radius: var(--radius-md); color: var(--text-primary);">
+            <option value="Well-Being">Work-Life & Well-Being</option>
+            <option value="eNPS">Employee Net Promoter (eNPS)</option>
+            <option value="Leadership">Management & Leadership</option>
+            <option value="Culture">Diversity & Inclusion</option>
+            <option value="Tooling">Engineering & Tooling</option>
+          </select>
+        </div>
+
+        <div class="auth-form-group" style="margin-bottom: 1rem;">
+          <label style="display: block; font-size: 0.8rem; font-weight: 600; margin-bottom: 0.35rem;">Target Department</label>
+          <select id="surveyDept" style="width: 100%; padding: 0.65rem; background: var(--bg-surface); border: 1px solid var(--border-color); border-radius: var(--radius-md); color: var(--text-primary);">
+            <option value="All Company">All Company</option>
+            <option value="Engineering">Engineering</option>
+            <option value="Product & Design">Product & Design</option>
+            <option value="People Operations">People Operations</option>
+            <option value="Customer Support">Customer Support</option>
+          </select>
+        </div>
+
+        <div class="auth-form-group" style="margin-bottom: 1rem;">
+          <label style="display: block; font-size: 0.8rem; font-weight: 600; margin-bottom: 0.35rem;">Participation Target (Employees)</label>
+          <input type="number" id="surveyTarget" required value="100" min="10" max="5000" style="width: 100%; padding: 0.65rem; background: var(--bg-input); border: 1px solid var(--border-color); border-radius: var(--radius-md); color: var(--text-primary);" />
+        </div>
+
+        <div class="auth-form-group" style="margin-bottom: 1.25rem;">
+          <label style="display: block; font-size: 0.8rem; font-weight: 600; margin-bottom: 0.35rem;">Description & Focus Areas</label>
+          <textarea id="surveyDesc" rows="3" placeholder="Explain the purpose of this review..." style="width: 100%; padding: 0.65rem; background: var(--bg-input); border: 1px solid var(--border-color); border-radius: var(--radius-md); color: var(--text-primary);"></textarea>
+        </div>
+
+        <button type="submit" class="btn btn-primary" style="width: 100%; padding: 0.75rem;">
+          <i class="fa-solid fa-paper-plane"></i> Launch Campaign to Database
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <!-- Broadcast Notice Modal -->
+  <div class="modal-overlay" id="broadcastModal" style="display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.7); z-index: 500; align-items: center; justify-content: center;">
+    <div class="card" style="max-width: 480px; width: 90%;">
+      <div class="card-header">
+        <h3 class="card-title"><i class="fa-solid fa-bullhorn"></i> Broadcast Company Announcement</h3>
+        <button id="closeBroadcastModalBtn" style="background: none; border: none; color: var(--text-muted); cursor: pointer; font-size: 1.1rem;"><i class="fa-solid fa-xmark"></i></button>
+      </div>
+      <form id="broadcastForm" style="padding: 1.25rem;">
+        <div class="auth-form-group" style="margin-bottom: 1rem;">
+          <label style="display: block; font-size: 0.8rem; font-weight: 600; margin-bottom: 0.35rem;">Notice Title</label>
+          <input type="text" id="broadcastTitle" required placeholder="e.g. Q4 Company All-Hands Scheduled" style="width: 100%; padding: 0.65rem; background: var(--bg-input); border: 1px solid var(--border-color); border-radius: var(--radius-md); color: var(--text-primary);" />
+        </div>
+
+        <div class="auth-form-group" style="margin-bottom: 1rem;">
+          <label style="display: block; font-size: 0.8rem; font-weight: 600; margin-bottom: 0.35rem;">Priority Level</label>
+          <select id="broadcastPriority" style="width: 100%; padding: 0.65rem; background: var(--bg-surface); border: 1px solid var(--border-color); border-radius: var(--radius-md); color: var(--text-primary);">
+            <option value="normal">Standard Announcement</option>
+            <option value="urgent">Urgent Policy Notice</option>
+            <option value="critical">Critical Compliance Action</option>
+          </select>
+        </div>
+
+        <div class="auth-form-group" style="margin-bottom: 1.25rem;">
+          <label style="display: block; font-size: 0.8rem; font-weight: 600; margin-bottom: 0.35rem;">Message Content</label>
+          <textarea id="broadcastMsg" rows="3" required placeholder="Write the announcement details..." style="width: 100%; padding: 0.65rem; background: var(--bg-input); border: 1px solid var(--border-color); border-radius: var(--radius-md); color: var(--text-primary);"></textarea>
+        </div>
+
+        <button type="submit" class="btn btn-primary" style="width: 100%; padding: 0.75rem;">
+          <i class="fa-solid fa-broadcast-tower"></i> Push Broadcast to All Users
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <!-- Scripts -->
+  <script src="js/app.js"></script>
+  <script src="js/admin-dashboard.js"></script>
+</body>
+</html>
