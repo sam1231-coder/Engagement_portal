@@ -1,4 +1,5 @@
- <img width="1906" height="863" alt="image" src="https://github.com/user-attachments/assets/bff95b3e-3938-4278-8421-6b974f141dca" />
+<img width="1906" height="863" alt="Screenshot 2026-11-25 192219" src="https://github.com/user-attachments/assets/d99b408a-9abe-4757-be4d-ae2d3e3aa1c9" />
+
 
 # Humanly: People, Culture and Organizational Engagement Platform
 
