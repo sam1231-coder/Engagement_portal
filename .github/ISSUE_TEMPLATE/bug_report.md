@@ -1,23 +1,28 @@
 ---
 name: Bug Report
-about: Report an issue or unexpected behavior in the Humanly platform
+about: Report an unexpected issue or defect in the Humanly platform
 title: '[BUG] '
 labels: bug
 assignees: ''
 ---
 
-## Description
-A clear and concise description of the issue encountered.
+Problem Description
 
-## Steps to Reproduce
-1. Navigate to '...'
-2. Click on '....'
-3. Observe the behavior
+Please provide a clear and concise summary of the issue observed, detailing the impact on the user workflow.
 
-## Expected Behavior
-What should happen under standard operation.
+Reproduction Sequence
 
-## Environment Details
-- Browser: [e.g. Chrome 120, Edge, Firefox]
-- Runtime: [e.g. Node.js v20+, Python 3.11]
-- Database: [e.g. SQLite local, PostgreSQL]
+1. Navigate to the relevant interface
+2. Perform the action that triggers the behavior
+3. Observe the unexpected outcome
+
+Expected Outcome
+
+Describe what should have occurred under standard platform specifications.
+
+Operating Environment
+
+Operating System and Version:
+Web Browser and Release:
+Backend Runtime (Node.js or Python):
+Database Engine (Embedded SQLite or PostgreSQL):

@@ -1,139 +1,122 @@
-# Humanly — People, Culture & Engagement Platform
+# Humanly: People, Culture and Organizational Engagement Platform
 
-An enterprise-grade, beautifully designed **People Analytics, Employee Engagement & Culture Platform** engineered with a natural solid palette (zero gradients), full client-side route protection, and a real production-grade database backend.
+Humanly is an enterprise-grade people analytics, employee engagement, and workplace culture platform. Engineered with a natural solid palette, full client-side route protection, and a production-grade database backend, the platform delivers a cohesive operational environment for leadership and employees alike.
 
 ---
 
-## 📂 Repository Folder Schema
+Repository Architecture and Workspace Schema
+
+The codebase is organized into dedicated functional directories, separating core application assets, database management files, operational documentation, and user interfaces.
 
 ```
 humanly/
 ├── .github/
 │   ├── ISSUE_TEMPLATE/
-│   │   ├── bug_report.md        # Structured bug reporting template
-│   │   └── feature_request.md   # Feature suggestion template
-│   └── pull_request_template.md # PR verification checklist
+│   │   ├── bug_report.md
+│   │   └── feature_request.md
+│   └── pull_request_template.md
 │
 ├── database/
-│   ├── schema.sql               # Production PostgreSQL DDL schema & indexes
-│   └── README.md                # Database architecture & migration guide
+│   ├── schema.sql
+│   └── README.md
 │
 ├── docs/
-│   ├── ARCHITECTURE.md          # System components & segregated routing model
-│   ├── API.md                   # Full REST API specification (Auth, Admin, Surveys)
-│   └── DEPLOYMENT.md            # Production deployment guide (Docker, Nginx, Linux)
+│   ├── ARCHITECTURE.md
+│   ├── API.md
+│   └── DEPLOYMENT.md
 │
 ├── css/
-│   ├── humanly.css              # Core design system (Natural solid palette, zero gradients)
-│   ├── components.css           # Dropzone, interactive chart stage, calendar, kudos
-│   └── adminator.css            # Legacy stylesheet forwarder
+│   ├── humanly.css
+│   ├── components.css
+│   └── adminator.css
 │
 ├── js/
-│   ├── auth-guard.js            # Database session gatekeeper, RBAC & admin navigation
-│   ├── admin-dashboard.js       # Admin Console controller, telemetry KPIs, audit logs
-│   ├── admin-users.js           # Workforce role administration, CRUD user management
-│   ├── app.js                   # Common controller, themes, sidebar, audio, Ctrl+K
-│   ├── analytics-studio.js      # Ingestion engine, interactive Chart.js, PNG export
-│   ├── dashboard.js             # Trajectory line/bar chart, interactive pulse poll
-│   ├── calendar.js              # Interactive month grid, meeting API sync, scheduler
-│   ├── kudos.js                 # Team and social recognition feed, reactions, confetti
-│   ├── surveys.js               # Review and survey campaigns, participation modal
-│   └── directory.js             # Filterable workforce table & retention monitor
+│   ├── auth-guard.js
+│   ├── admin-dashboard.js
+│   ├── admin-users.js
+│   ├── app.js
+│   ├── analytics-studio.js
+│   ├── dashboard.js
+│   ├── calendar.js
+│   ├── kudos.js
+│   ├── surveys.js
+│   └── directory.js
 │
 ├── data/
-│   ├── employee_engagement_q4_2026.csv   # Sample CSV dataset for studio testing
-│   └── quarterly_sentiment_breakdown.csv # Longitudinal sentiment dataset
+│   ├── employee_engagement_q4_2026.csv
+│   └── quarterly_sentiment_breakdown.csv
 │
-├── admin-dashboard.html         # Admin Console & Executive Telemetry
-├── admin-users.html             # Workforce & Role Administration
-├── analytics.html               # Document Analytics Studio (Excel/CSV/PDF analysis)
-├── calendar.html                # Team Calendar & Meeting Schedule
-├── dashboard.html               # Employee Engagement health, trends & live pulse poll
-├── directory.html               # Team Directory & Retention Monitor
-├── index.html                   # Root gateway (Routes based on DB session token and role)
-├── kudos.html                   # "Team and social" recognition feed
-├── login.html                   # Production authentication portal (DB Login & Registration)
-├── settings.html                # Portal Settings, Natural Palettes & Sign Out
-├── surveys.html                 # "Review and survey" campaigns & participation modal
+├── admin-dashboard.html
+├── admin-users.html
+├── analytics.html
+├── calendar.html
+├── dashboard.html
+├── directory.html
+├── index.html
+├── kudos.html
+├── login.html
+├── settings.html
+├── surveys.html
 │
-├── .env.example                 # Environment configuration template
-├── .gitignore                   # Ignores runtime binaries, humanly.db, logs, __pycache__
-├── CONTRIBUTING.md              # Contribution guidelines & PR process
-├── db.js                        # Production SQLite database engine with PBKDF2/SHA-512
-├── package.json                 # Project manifest & npm scripts
-├── server.js                    # Node.js production HTTP & REST API server
-└── server.py                    # Python production HTTP & REST API server
+├── .env.example
+├── .gitignore
+├── CONTRIBUTING.md
+├── db.js
+├── package.json
+├── server.js
+└── server.py
 ```
 
 ---
 
-## 🛡️ Authentication & Database Access Control (RBAC)
+Authentication and Role-Based Access Control
 
-Authentication is verified directly against the production database with salted cryptographic password hashing (`PBKDF2` with `SHA-512` and 100,000 iterations).
+User authentication is performed directly against the production database using salted cryptographic password hashing through PBKDF2 with SHA-512 and one hundred thousand iterations. Sessions are maintained via cryptographically random sixty-four character bearer tokens with automatic expiration checks.
 
-### Pre-Seeded Production Accounts
+Default Pre-Seeded Accounts
 
-| Persona | Email | Password | Role | Access Level |
+The platform includes pre-configured workforce accounts for immediate evaluation:
+
+| Persona | Email | Password | Assigned Role | System Access Scope |
 | :--- | :--- | :--- | :--- | :--- |
-| **Elena Rostova** | `admin@humanly.io` | `Admin@2026!` | `admin` | Full Admin Console & User Management |
-| **Sarah Jenkins** | `sarah.ops@humanly.io` | `Humanly@2026!` | `admin` | People Ops Manager (Admin Console) |
-| **Alex Vance** | `alex.vance@humanly.io` | `Employee@2026!` | `employee` | Standard Employee Portal |
-| **Maya Lin** | `maya.lin@humanly.io` | `Employee@2026!` | `employee` | Standard Employee Portal |
-| **David Chen** | `david.chen@humanly.io` | `Employee@2026!` | `employee` | Standard Employee Portal |
+| Elena Rostova | admin@humanly.io | Admin@2026! | admin | Full Executive Control and User Management |
+| Sarah Jenkins | sarah.ops@humanly.io | Humanly@2026! | admin | People Operations and Workforce Console |
+| Alex Vance | alex.vance@humanly.io | Employee@2026! | employee | Core Employee Portal and Engagement Tools |
+| Maya Lin | maya.lin@humanly.io | Employee@2026! | employee | Core Employee Portal and Engagement Tools |
+| David Chen | david.chen@humanly.io | Employee@2026! | employee | Core Employee Portal and Engagement Tools |
 
-*New accounts can also be created live using the **"Register"** tab on `login.html` or via the Admin User Management console.*
+New team members may also be provisioned through the registration interface on the sign-in page or through the administrator management console.
 
 ---
 
-## 🚀 How to Run the Platform
+Running the Application
 
-### Option A: Node.js Production Server (Recommended)
+Node.js Environment
+
+The primary runtime uses standard Node.js without third-party dependencies, utilizing the built-in SQLite database engine and HTTP server.
+
 ```powershell
 npm start
-# or: node server.js
 ```
-- Starts HTTP server on port `8080`.
-- Connects to SQLite database (`./humanly.db`).
-- Serves REST APIs (`/api/auth/*`, `/api/admin/*`, `/api/users/*`, `/api/surveys/*`).
 
-### Option B: Python Production Server
+This starts the HTTP listener on port 8080, connects to the local database file at ./humanly.db, and activates all RESTful endpoints for authentication, administration, surveys, and collaboration.
+
+Python Environment
+
+Alternatively, the platform can be executed within a Python runtime:
+
 ```powershell
 npm run py
-# or: python server.py
-```
-- Starts lightweight Python server on port `8080` with identical SQLite REST API endpoints.
-
-*Open **[http://localhost:8080](http://localhost:8080)** in any browser.*
-
----
-
-## 📤 How to Commit and Push to GitHub
-
-To publish this project to your GitHub repository:
-
-```bash
-# 1. Initialize git if not already present
-git init
-
-# 2. Stage all organized files (.gitignore will exclude binaries and cache)
-git add .
-
-# 3. Commit with a clean descriptive message
-git commit -m "feat: complete Humanly platform with production database, RBAC, and GitHub schema"
-
-# 4. Link your GitHub remote repository
-git remote add origin https://github.com/<your-username>/<your-repo-name>.git
-
-# 5. Push to main branch
-git branch -M main
-git push -u origin main
 ```
 
----
+This launches the Python server on port 8080, interacting with the exact same relational database and exposing matching API routes. The application can be viewed in any modern browser at http://localhost:8080.
 
-## 📚 Technical Documentation
+Reference Documentation
 
-- **[System Architecture](docs/ARCHITECTURE.md)**: Detailed component overview, data flow, and security model.
-- **[REST API Specification](docs/API.md)**: Full endpoint definitions, request schemas, and responses.
-- **[Database Guide](database/README.md)**: Table schema diagrams, PBKDF2 hashing, and PostgreSQL migration.
-- **[Deployment Guide](docs/DEPLOYMENT.md)**: Instructions for Docker, Nginx, and cloud providers.
+Comprehensive architectural descriptions are available in docs/ARCHITECTURE.md, explaining our multi-page isolation design and request lifecycle.
+
+Detailed interface contracts and payload schemas are documented in docs/API.md for engineers building integrations.
+
+Database structure, hashing mechanics, and PostgreSQL migration instructions are cataloged in database/README.md.
+
+Infrastructure deployment steps for Docker, Nginx, and cloud hosting platforms are provided in docs/DEPLOYMENT.md.

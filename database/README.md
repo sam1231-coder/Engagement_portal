@@ -1,25 +1,24 @@
-# Humanly Database Architecture & Schema Guide
+# Humanly Database Architecture and Schema Guide
 
-This directory holds the relational schema definitions, migrations, and database connection documentation for the **Humanly** platform.
-
----
-
-## 1. Supported Database Engines
-
-### Engine A: Embedded SQLite (Default & Zero Setup)
-- **Engine**: Node.js v20+ native `node:sqlite` (or Python's built-in `sqlite3`).
-- **File**: `humanly.db` (auto-created in root on first boot).
-- **Concurrency**: Write-Ahead Logging (`PRAGMA journal_mode = WAL;`) and enforced Foreign Keys (`PRAGMA foreign_keys = ON;`).
-- **Best for**: Rapid development, single-instance deployments, local evaluation, and air-gapped systems.
-
-### Engine B: PostgreSQL (Enterprise & Cloud Scalable)
-- **Engine**: PostgreSQL 14+.
-- **Schema File**: [`database/schema.sql`](schema.sql).
-- **Best for**: Multi-replica Kubernetes clusters, AWS RDS, Supabase, Neon, or enterprise HRIS integrations.
+This document details the relational data model, cryptographic security implementation, and deployment strategies supported by the Humanly platform.
 
 ---
 
-## 2. Table Schema Overview
+Supported Relational Engines
+
+Embedded SQLite Architecture
+
+By default, Humanly utilizes an embedded SQLite database engine using Node.js native sqlite capabilities or Python standard sqlite3. The database file resides at humanly.db in the application root directory. It runs with Write-Ahead Logging enabled and foreign key enforcement active, providing robust performance and ACID transactions for single-host deployments without requiring background database services.
+
+PostgreSQL Cloud Architecture
+
+For containerized environments, high-availability clusters, or integrations with corporate HRIS platforms, Humanly is fully compatible with PostgreSQL version 14 and higher. The complete data definition script is available in database/schema.sql, incorporating standard primary keys, indexed foreign relationships, and strict data type constraints.
+
+---
+
+Relational Entity Structure
+
+The core schema revolves around the central users entity, establishing relationships across sessions, feedback surveys, peer appreciation, calendar schedules, and administrative security logs.
 
 ```
                       +-------------------+
@@ -43,42 +42,37 @@ This directory holds the relational schema definitions, migrations, and database
                                             +--------------+   +---------------+
 ```
 
-### Table Definitions
+The users table holds employee profiles, roles, departmental affiliations, and salted cryptographic hashes.
 
-| Table | Primary Key | Description |
-| :--- | :--- | :--- |
-| `users` | `id` (INTEGER / SERIAL) | Workforce profiles, role (`admin`, `employee`), department, salted password hash |
-| `sessions` | `token` (VARCHAR(128)) | Cryptographic bearer session tokens with expiration timestamps |
-| `surveys` | `id` (INTEGER / SERIAL) | Review campaigns, target headcount, status (`Active`, `Closed`), participation stats |
-| `survey_responses`| `id` (INTEGER / SERIAL) | Anonymous survey responses, 1-5 rating, work-life balance slider (1-10), feedback |
-| `kudos` | `id` (INTEGER / SERIAL) | Peer appreciation cards, badges, core values (`#Teamwork`, `#Innovation`), emoji reactions |
-| `calendar_events` | `id` (INTEGER / SERIAL) | Team meetings, 1-on-1s, sync links (Google Meet, Teams, Zoom) |
-| `audit_logs` | `id` (INTEGER / SERIAL) | Real-time security telemetry, login records, privilege alterations, IP logs |
-| `system_announcements` | `id` (INTEGER / SERIAL) | Executive broadcasts, priority alerts (`normal`, `urgent`, `critical`) |
+The sessions table tracks active bearer tokens, user identifiers, and expiration timestamps.
 
----
+The surveys table stores active, draft, and closed review campaigns, participation statistics, and completion goals.
 
-## 3. Cryptographic Password Hashing
+The survey_responses table records anonymous survey submissions, numerical scores, well-being metrics, and written feedback.
 
-Humanly implements **PBKDF2** (Password-Based Key Derivation Function 2) with:
-- **Digest Algorithm**: `SHA-512`
-- **Iterations**: 100,000 rounds
-- **Salt**: 16-byte cryptographically secure pseudorandom salt (`crypto.randomBytes(16)`)
-- **Key Length**: 64 bytes (512 bits)
-- **Comparison**: `crypto.timingSafeEqual` to eliminate timing attack vectors.
+The kudos table stores peer recognition cards, core organizational values, badges, and JSON-encoded emoji reaction counts.
+
+The calendar_events table coordinates team schedules, one-on-one sessions, host relationships, and meeting URLs.
+
+The audit_logs table maintains an immutable record of system events, authentication outcomes, role changes, and originating IP addresses.
+
+The system_announcements table contains leadership broadcasts, priority flags, and author attribution.
 
 ---
 
-## 4. Deploying to PostgreSQL
+Cryptographic Security Model
 
-To deploy against a PostgreSQL instance:
+To protect user credentials against credential stuffing and brute-force attacks, Humanly employs the PBKDF2 key derivation algorithm. Passwords undergo one hundred thousand iterations of the SHA-512 digest function with sixteen bytes of cryptographically secure random salt generated per user. Hash comparison uses timing-safe equality verification to prevent side-channel timing analysis.
+
+---
+
+PostgreSQL Deployment Sequence
+
+To deploy the schema against a PostgreSQL instance, create your database and pipe the schema file through the psql command line tool:
+
 ```bash
-# 1. Create the database
 createdb -U postgres humanly
-
-# 2. Execute schema DDL
 psql -U postgres -d humanly -f database/schema.sql
-
-# 3. Configure connection string in .env
-DATABASE_URL=postgresql://postgres:password@localhost:5432/humanly
 ```
+
+Then specify your connection string in the environment configuration file using the DATABASE_URL key, pointing to your database host, port, credentials, and database name.

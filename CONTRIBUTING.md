@@ -1,45 +1,40 @@
 # Contributing to Humanly
 
-Thank you for your interest in contributing to Humanly. This document outlines development guidelines and contribution workflows.
+We welcome contributions from engineers, designers, and workplace culture advocates. This guide outlines our development philosophy, workflow conventions, and review procedures to ensure high code quality across the platform.
 
 ---
 
-## Getting Started
+Getting Started with Development
 
-1. **Clone the Repository**:
-   ```bash
-   git clone https://github.com/your-org/humanly.git
-   cd humanly
-   ```
+To set up your local development environment, begin by cloning the repository to your workstation and moving into the root directory:
 
-2. **Verify Node.js Version**:
-   - Ensure Node.js v20.0.0 or higher is installed (`node -v`).
+```bash
+git clone https://github.com/your-org/humanly.git
+cd humanly
+```
 
-3. **Start the Development Server**:
-   ```bash
-   npm start
-   # or
-   python server.py
-   ```
-   Open `http://localhost:8080` in your browser.
+Ensure you have a supported Node.js environment of version 20 or greater installed on your machine. You can start the server using npm start or python server.py. The application will immediately bind to port 8080 and initialize the local database file if it is not already present.
 
 ---
 
-## Branching & Commit Guidelines
+Branching Model and Commit Standards
 
-- Create focused feature branches from `main`:
-  `git checkout -b feature/your-feature-name`
-  or
-  `git checkout -b fix/issue-description`
-- Write clear, concise commit messages following conventional guidelines:
-  - `feat: add new survey question type`
-  - `fix: resolve mobile sidebar drawer tap target`
-  - `docs: update API specification for user endpoints`
+Please base all new work on isolated branches created from main. Choose descriptive branch names that summarize the intent, such as feature/survey-export-enhancement or fix/auth-token-refresh.
+
+Commit messages should convey the functional outcome clearly and professionally. We recommend the conventional commit structure, such as feat: support horizontal bar chart in studio, fix: handle session expiration gracefully, or docs: expand PostgreSQL setup guide.
 
 ---
 
-## Pull Request Process
+Design System Principles
 
-1. Ensure code follows our natural solid color design system without artificial gradient effects.
-2. Verify all syntax checks pass before opening a PR (`node -c <file>`).
-3. Fill out the pull request template and request review from maintainers.
+When crafting user interfaces, we adhere strictly to our natural solid palette without artificial gradients. All interactive elements should maintain high contrast and clear visual hierarchy.
+
+Micro-interactions should remain formal and purposeful. Whenever adding new styles, verify that components look balanced across both dark and light display modes.
+
+---
+
+Submitting Contributions
+
+Before submitting a pull request, ensure that all JavaScript files compile cleanly and that your changes preserve route protection across both employee and administrator roles.
+
+Open your pull request against the main branch, complete the provided pull request template, and provide context regarding the problem solved and the verification steps taken. A maintainer will review your submission promptly.

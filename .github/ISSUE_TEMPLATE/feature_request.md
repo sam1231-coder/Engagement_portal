@@ -1,16 +1,19 @@
 ---
 name: Feature Request
-about: Suggest a new capability or UX improvement for Humanly
+about: Propose a functional enhancement or capability for Humanly
 title: '[FEATURE] '
 labels: enhancement
 assignees: ''
 ---
 
-## Feature Summary
-Explain the feature or enhancement you would like added.
+Proposed Capability Summary
 
-## Motivation & Use Case
-Describe the problem this feature solves for employees or administrators.
+Explain the new feature or functional improvement you would like introduced to the platform.
 
-## Proposed Solution / Design
-Outline your proposed technical or interface approach.
+Organizational Motivation and Use Case
+
+Detail the workplace scenario, leadership requirement, or employee experience improvement this enhancement addresses.
+
+Architectural and Interface Recommendations
+
+Describe any specific interface layouts, backend routes, or data schema considerations related to this proposal.

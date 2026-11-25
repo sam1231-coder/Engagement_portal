@@ -1,145 +1,108 @@
-# Humanly REST API Specification
+# Humanly RESTful API Specification
 
-The Humanly backend exposes a RESTful API on port `8080` (or `PORT` environment variable).
+The Humanly backend provides an interface on port 8080 supporting JSON request and response payloads with CORS headers enabled.
 
-All protected routes require the HTTP header:
+Protected endpoints require the client to supply an HTTP authorization header containing the active session bearer token:
+
 ```http
 Authorization: Bearer <your_session_token>
 ```
 
 ---
 
-## 1. Authentication Endpoints
+Authentication Services
 
-### `POST /api/auth/login`
-Authenticates a user against the database.
-- **Request Body**:
-  ```json
-  {
-    "email": "admin@humanly.io",
-    "password": "Admin@2026!"
-  }
-  ```
-- **Response (200 OK)**:
-  ```json
-  {
-    "success": true,
-    "token": "7a8f9c2d1e4b...",
-    "expiresAt": "2026-11-26T10:19:34.000Z",
-    "user": {
-      "id": 1,
-      "name": "Elena Rostova",
-      "email": "admin@humanly.io",
-      "role": "admin",
-      "department": "Executive Operations",
-      "title": "VP of People & Culture (Admin)",
-      "avatar": "https://images.unsplash.com/..."
-    }
-  }
-  ```
+User Sign In Endpoint
 
-### `POST /api/auth/register`
-Creates a new account in the database.
-- **Request Body**:
-  ```json
-  {
-    "name": "Jordan Smith",
-    "email": "jordan.smith@humanly.io",
-    "password": "SecurePassword123!",
-    "role": "employee",
-    "department": "Engineering",
-    "title": "Full Stack Engineer"
-  }
-  ```
+The POST /api/auth/login route validates employee credentials against salted PBKDF2 database records.
 
-### `GET /api/auth/me`
-Validates the current session token and returns the logged-in profile.
+Request parameters must include email and password. Upon successful verification, the server records an audit log entry and responds with an HTTP 200 status code containing the bearer token string, session expiration timestamp, and public profile data.
 
-### `POST /api/auth/logout`
-Invalidates and deletes the session token from the database.
+```json
+{
+  "email": "admin@humanly.io",
+  "password": "Admin@2026!"
+}
+```
+
+New Account Provisioning
+
+The POST /api/auth/register route creates a new record in the users table, generating a distinct salt and hashed credential.
+
+Expected parameters include name, email, password, and optional values for department, title, and initial role. The server returns an HTTP 201 status code with the newly generated session and user details.
+
+Session Profile Inspection
+
+The GET /api/auth/me route inspects the bearer token supplied in the authorization header and returns the validated profile data. An HTTP 401 code is returned if the token is absent, invalid, or expired.
+
+Session Termination
+
+The POST /api/auth/logout route revokes the active bearer token by deleting the corresponding record from the sessions table.
 
 ---
 
-## 2. Workforce & User Endpoints
+Workforce Management Services
 
-### `GET /api/users`
-Returns all registered workforce members.
+Workforce Directory Listing
 
-### `POST /api/users` *(Admin Only)*
-Creates a new workforce account.
+The GET /api/users route retrieves an array of registered workforce members, returning public fields including identifier, name, email, role, department, job title, avatar URL, and retention health metrics.
 
-### `PUT /api/users/:id/role` *(Admin Only)*
-Modifies an employee's role (`admin` or `employee`).
-- **Request Body**:
-  ```json
-  {
-    "role": "admin"
-  }
-  ```
+Administrative User Creation
 
-### `DELETE /api/users/:id` *(Admin Only)*
-Deletes an account from the database.
+The POST /api/users route enables administrators to provision new accounts. This endpoint is protected by role-based checks and returns an HTTP 403 status code if accessed by non-administrative users.
+
+Role Modification
+
+The PUT /api/users/:id/role route allows administrators to update the access level of a user between employee and admin. The server logs the event in the audit trail and returns the updated user record.
+
+Account Deactivation
+
+The DELETE /api/users/:id route deletes an employee record and cascades removal of associated sessions.
 
 ---
 
-## 3. Review & Survey Endpoints
+Review and Survey Services
 
-### `GET /api/surveys`
-Returns all active and closed review campaigns.
+Survey Listing
 
-### `POST /api/surveys` *(Admin Only)*
-Launches a new review campaign.
-- **Request Body**:
-  ```json
-  {
-    "title": "Q1 2027 Psychological Safety Review",
-    "category": "Well-Being",
-    "department": "Engineering",
-    "total_target": 120,
-    "description": "Quarterly survey on workload and team health."
-  }
-  ```
+The GET /api/surveys route returns active, draft, and closed review campaigns, including total target headcount and real-time participation percentages.
 
-### `POST /api/surveys/:id/respond`
-Submits an anonymous survey response.
-- **Request Body**:
-  ```json
-  {
-    "rating": 5,
-    "balanceScore": 9,
-    "comments": "Great squad alignment and async communication."
-  }
-  ```
+Campaign Creation
+
+The POST /api/surveys route allows administrators to launch new organizational pulse reviews. Payload fields include title, category, department, deadline, target headcount, and descriptive focus areas.
+
+Feedback Submission
+
+The POST /api/surveys/:id/respond route records confidential employee participation, accepting a 1 to 5 numerical rating, a 1 to 10 work-life score, and optional text commentary. The system automatically recalculates survey completion metrics upon submission.
 
 ---
 
-## 4. Kudos & Recognition Endpoints
+Recognition and Collaboration Services
 
-### `GET /api/kudos`
-Returns the recent appreciation wall posts.
+Kudos Wall Listing
 
-### `POST /api/kudos`
-Posts peer recognition.
-- **Request Body**:
-  ```json
-  {
-    "recipient_name": "Maya Lin",
-    "recipient_role": "Lead Product Designer",
-    "badge": "🎨 Creative Spark",
-    "core_value": "#Innovation",
-    "message": "Outstanding work on the new UI interaction model!"
-  }
-  ```
+The GET /api/kudos route delivers the fifty most recent peer appreciation cards, complete with sender details, recipient profile, core organizational value, badge, and emoji reaction tallies.
+
+Recognition Submission
+
+The POST /api/kudos route persists a new peer recognition post, accepting recipient name, recipient role, badge, core organizational value, and appreciation message.
+
+Calendar Schedule Coordination
+
+The GET /api/calendar and POST /api/calendar routes facilitate viewing and booking team events, one-on-one reviews, and cross-functional meetings with associated video conference links.
 
 ---
 
-## 5. Administrative Telemetry Endpoints
+Administrative Telemetry and Auditing
 
-### `GET /api/admin/stats` *(Admin Only)*
-Returns high-level workforce metrics, compliance ratios, and department breakdowns.
+Executive Overview Statistics
 
-### `GET /api/admin/audit-logs` *(Admin Only)*
-Returns the recent security and database audit logs.
+The GET /api/admin/stats route provides consolidated organizational metrics, covering active headcount, administrator ratios, review compliance, and departmental distributions.
 
-### `POST /api/admin/broadcast` *(Admin Only)*
-Pushes a company-wide announcement.
+Security Audit Logs
+
+The GET /api/admin/audit-logs route returns recent security events, detailing timestamp, acting user email, event action, descriptive notes, and originating IP address.
+
+Organizational Broadcasts
+
+The POST /api/admin/broadcast route enables leadership to dispatch urgent announcements and company-wide notices.

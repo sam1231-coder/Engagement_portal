@@ -1,10 +1,12 @@
-# Humanly Architecture & Technical Specification
+# Humanly System Architecture and Technical Specification
 
-This document details the software architecture, design principles, segregated frontend structure, and security model of **Humanly**.
+This document provides a comprehensive overview of the design philosophy, application architecture, frontend isolation patterns, and security guard mechanisms that power the Humanly platform.
 
 ---
 
-## 1. System Architecture Overview
+High-Level Architecture
+
+Humanly uses a decoupled architecture where modern client-side documents communicate with a lightweight REST API backend. The system minimizes complexity by avoiding heavy build tooling while providing full production security and transactional persistence.
 
 ```
                                +------------------------------------------+
@@ -33,30 +35,28 @@ This document details the software architecture, design principles, segregated f
 
 ---
 
-## 2. Segregated Multi-Page Architecture
+Segregated Multi-Page Design
 
-Rather than a bloated, fragile Single Page Application bundle, Humanly uses **isolated, segregated HTML5 interfaces** where each capability has its own specialized document:
+Rather than bundling the entire application into a monolithic single-page script, Humanly segregates each functional capability into an independent HTML document. This ensures that memory consumption remains low, pages load instantaneously, and navigation boundaries are clear and maintainable.
 
-| Page | Role Required | Purpose |
-| :--- | :--- | :--- |
-| `index.html` | Any | Root gatekeeper; routes users to login or dashboard |
-| `login.html` | Public | Credential authentication & new employee registration |
-| `admin-dashboard.html` | `admin` | Executive control center, audit logs, campaign launcher |
-| `admin-users.html` | `admin` | Workforce directory, role modification, account management |
-| `dashboard.html` | `employee` / `admin` | Longitudinal engagement trends, live pulse poll widget |
-| `analytics.html` | `employee` / `admin` | Document Analytics Studio (Excel/CSV/PDF analysis) |
-| `surveys.html` | `employee` / `admin` | Active review campaigns & participation modal |
-| `kudos.html` | `employee` / `admin` | Team recognition feed, reactions & confetti triggers |
-| `calendar.html` | `employee` / `admin` | Meeting schedule & external video conferencing sync |
-| `directory.html` | `employee` / `admin` | Workforce list with retention health monitoring |
-| `settings.html` | `employee` / `admin` | Natural palette switcher, synthesized audio toggles |
+The index.html file acts as an intelligent gateway, checking user authentication and routing visitors directly to their appropriate destination based on role and session validity.
+
+The login.html interface provides a dedicated authentication screen supporting both email credential sign-in and new account registration.
+
+The admin-dashboard.html and admin-users.html documents serve as the executive control center, providing administrative telemetry, workforce role assignment, and audit inspection.
+
+The dashboard.html, analytics.html, surveys.html, kudos.html, calendar.html, directory.html, and settings.html pages deliver the employee experience, covering engagement indicators, spreadsheet analysis, pulse reviews, peer appreciation, scheduling, directory search, and display settings.
 
 ---
 
-## 3. Security & Route Protection (`auth-guard.js`)
+Security and Route Enforcement
 
-Route enforcement is executed before DOM content renders:
-1. **Unauthenticated Redirect**: Any unauthenticated request to an internal page triggers an immediate rewrite to `login.html`.
-2. **Role Verification (RBAC)**: When accessing `admin-dashboard.html` or `admin-users.html`, the user's role is checked. If `role !== 'admin'`, the session is redirected to `dashboard.html`.
-3. **Session Verification**: The client sends bearer tokens in the `Authorization: Bearer <token>` header for all REST operations.
-4. **CSRF & XSS Mitigation**: All inputs use strict DOM parsing (`textContent`), prepared SQL statements, and parameter binding.
+The client-side routing guard resides in js/auth-guard.js and executes immediately upon page initialization.
+
+If an unauthenticated user attempts to access an internal dashboard or tool, the guard halts rendering and redirects the browser to login.html.
+
+When an employee attempts to navigate to administrative consoles, the guard detects insufficient privileges and safely redirects the user back to the standard dashboard.
+
+For authenticated administrators, the guard dynamically injects the administrator navigation drawer into the sidebar and provides a quick switcher pill in the top header.
+
+All state transitions and credentials are validated on the server via standard HTTP bearer tokens, ensuring that client-side route protection is paired with strict database-level authorization.

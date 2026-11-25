@@ -1,28 +1,32 @@
-# Humanly Deployment & Operations Guide
+# Humanly Production Deployment and Operations Guide
 
-This guide describes how to deploy the **Humanly** platform across various cloud and on-premise environments.
+This guide describes operational procedures for hosting, scaling, and managing the Humanly platform across local, containerized, and dedicated cloud environments.
 
 ---
 
-## 1. Quick Local Execution
+Local and Standalone Execution
 
-### Node.js (Recommended)
+For standalone execution, Humanly requires either a Node.js runtime of version 20 or greater, or a Python 3.11 environment.
+
+To start with Node.js, execute:
+
 ```bash
 node server.js
 ```
 
-### Python
+To run with Python, execute:
+
 ```bash
 python server.py
 ```
 
-Access the platform at `http://localhost:8080`.
+Both runtimes connect directly to the local relational database and begin serving traffic on port 8080.
 
 ---
 
-## 2. Docker Deployment
+Containerized Deployment with Docker
 
-Create a `Dockerfile` in the root:
+To deploy the platform within an isolated container, create a Dockerfile at the root of your repository:
 
 ```dockerfile
 FROM node:20-alpine
@@ -34,17 +38,20 @@ ENV NODE_ENV=production
 CMD ["node", "server.js"]
 ```
 
-Build and run:
+Build the container image and launch the process:
+
 ```bash
 docker build -t humanly-platform:latest .
 docker run -d -p 8080:8080 --name humanly humanly-platform:latest
 ```
 
+The application is now isolated, hardened, and accessible on host port 8080.
+
 ---
 
-## 3. Reverse Proxy with Nginx
+Reverse Proxy Configuration with Nginx
 
-Sample Nginx block:
+When deploying in production behind a web server, Nginx acts as an SSL termination point, reverse proxy, and static cache accelerator. A typical configuration block is provided below:
 
 ```nginx
 server {
@@ -66,13 +73,15 @@ server {
 
 ---
 
-## 4. Systemd Service (Linux Server)
+Process Management with Linux Systemd
 
-Create `/etc/systemd/system/humanly.service`:
+For enterprise Linux servers, running Humanly under systemd ensures automatic process supervision, logging, and recovery upon unexpected termination or system reboots.
+
+Create the service definition file at /etc/systemd/system/humanly.service:
 
 ```ini
 [Unit]
-Description=Humanly People & Engagement Platform
+Description=Humanly People and Engagement Platform
 After=network.target
 
 [Service]
@@ -89,9 +98,11 @@ Environment=PORT=8080
 WantedBy=multi-user.target
 ```
 
-Enable and start:
+Reload the systemd daemon, enable the service, and verify status:
+
 ```bash
 sudo systemctl daemon-reload
 sudo systemctl enable humanly
 sudo systemctl start humanly
+sudo systemctl status humanly
 ```
