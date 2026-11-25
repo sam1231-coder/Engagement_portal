@@ -1,3 +1,5 @@
+ <img width="1906" height="863" alt="image" src="https://github.com/user-attachments/assets/bff95b3e-3938-4278-8421-6b974f141dca" />
+
 # Humanly: People, Culture and Organizational Engagement Platform
 
 Humanly is an enterprise-grade people analytics, employee engagement, and workplace culture platform. Engineered with a natural solid palette, full client-side route protection, and a production-grade database backend, the platform delivers a cohesive operational environment for leadership and employees alike.
