@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Team Directory • Humanly</title>
+  <title>Team and social • Humanly</title>
 
   <!-- External Fonts & Icons -->
   <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -12,11 +12,11 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
 
   <!-- Core App Stylesheets -->
-  <link rel="stylesheet" href="css/humanly.css" />
-  <link rel="stylesheet" href="css/components.css" />
+  <link rel="stylesheet" href="../css/humanly.css" />
+  <link rel="stylesheet" href="../css/components.css" />
 
   <!-- Auth Guard (Enforces authentication before loading page) -->
-  <script src="js/auth-guard.js"></script>
+  <script src="../js/auth-guard.js"></script>
 
   <!-- Canvas Confetti -->
   <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.2/dist/confetti.browser.min.js"></script>
@@ -60,7 +60,7 @@
           <span class="menu-badge">3 Open</span>
         </a>
 
-        <a href="kudos.html" class="menu-item">
+        <a href="kudos.html" class="menu-item active">
           <i class="fa-solid fa-award"></i>
           <span class="menu-label">Team and social</span>
           <span class="menu-badge">Feed</span>
@@ -74,7 +74,7 @@
 
         <div class="menu-category">Organization & People</div>
 
-        <a href="directory.html" class="menu-item active">
+        <a href="directory.html" class="menu-item">
           <i class="fa-solid fa-users-viewfinder"></i>
           <span class="menu-label">Team Directory</span>
         </a>
@@ -170,56 +170,20 @@
             <div class="page-breadcrumbs">
               <a href="dashboard.html">Humanly</a>
               <i class="fa-solid fa-chevron-right" style="font-size: 0.6rem;"></i>
-              <span>Team Directory</span>
+              <span>Team and social</span>
             </div>
-            <h1 class="page-title">Team Directory & Retention Monitor</h1>
-            <p class="page-subtitle">Search workforce members, track engagement scores, attrition risk indicators, and schedule 1-on-1s.</p>
+            <h1 class="page-title">Team and Social Recognition Wall</h1>
+            <p class="page-subtitle">Celebrate team wins, company core values, and peer appreciation in real time.</p>
+          </div>
+          <div class="page-header-actions">
+            <button class="btn btn-primary" id="openSendKudosHeroBtn">
+              <i class="fa-solid fa-sparkles"></i> Give Kudos
+            </button>
           </div>
         </div>
 
-        <div class="card">
-          <!-- Filter Bar -->
-          <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 1rem; margin-bottom: 1.25rem;">
-            <div style="display: flex; align-items: center; gap: 0.75rem; flex-wrap: wrap;">
-              <input type="text" id="directorySearchInput" placeholder="Search by name or role..." style="width: 240px;" />
-              <select id="directoryDeptFilter">
-                <option value="all">All Departments</option>
-                <option value="Engineering">Engineering</option>
-                <option value="Product">Product</option>
-                <option value="Design">Design</option>
-                <option value="Marketing">Marketing</option>
-                <option value="Sales">Sales</option>
-                <option value="HR & People">HR & People</option>
-                <option value="Customer Support">Customer Support</option>
-                <option value="Finance">Finance</option>
-              </select>
-              <select id="directoryRiskFilter">
-                <option value="all">All Retention Risks</option>
-                <option value="Low">Low Risk</option>
-                <option value="Medium">Medium Risk</option>
-                <option value="High">High Risk</option>
-              </select>
-            </div>
-            <span id="directoryCountLabel" style="font-size: 0.8rem; color: var(--text-muted); font-weight: 600;">Showing employees</span>
-          </div>
-
-          <!-- Table -->
-          <div class="data-table-wrapper">
-            <table class="custom-table">
-              <thead>
-                <tr>
-                  <th>Employee</th>
-                  <th>Department</th>
-                  <th>Engagement Score</th>
-                  <th>Attrition Risk</th>
-                  <th>Last 1-on-1</th>
-                  <th>Quick Actions</th>
-                </tr>
-              </thead>
-              <tbody id="directoryTableBody"></tbody>
-            </table>
-          </div>
-        </div>
+        <!-- Kudos Feed Cards -->
+        <div class="kudos-feed" id="kudosFeedContainer"></div>
 
       </div>
     </main>
@@ -291,9 +255,8 @@
   <div class="toast-container" id="toastContainer"></div>
 
   <!-- Application Scripts -->
-  <script src="js/sample-data.js"></script>
-  <script src="js/directory.js"></script>
-  <script src="js/kudos.js"></script>
-  <script src="js/app.js"></script>
+  <script src="../js/sample-data.js"></script>
+  <script src="../js/kudos.js"></script>
+  <script src="../js/app.js"></script>
 </body>
 </html>

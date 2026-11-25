@@ -19,7 +19,7 @@ const App = (function () {
 
   // 1. Theme Management (Dark / Light Mode)
   function initTheme() {
-    const savedTheme = localStorage.getItem("adminator_theme") || "dark";
+    const savedTheme = localStorage.getItem("humanly_theme") || localStorage.getItem("adminator_theme") || "dark";
     applyTheme(savedTheme);
 
     const themeToggleBtn = document.getElementById("themeSwitchBtn");
@@ -35,6 +35,7 @@ const App = (function () {
 
   function applyTheme(theme) {
     document.documentElement.setAttribute("data-theme", theme);
+    localStorage.setItem("humanly_theme", theme);
     localStorage.setItem("adminator_theme", theme);
 
     if (typeof Dashboard !== "undefined" && Dashboard.refresh) {

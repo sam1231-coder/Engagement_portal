@@ -8,56 +8,62 @@
 
 :root {
   /* ========================================================================
-     SOLID NATURAL PALETTE - DARK MODE (Natural Slate & Deep Charcoal)
+     COLOR HUNT PALETTE - DARK MODE
+     https://colorhunt.co/palette/1b365d005a9c60c1e5a0e0ef
+     #1b365d (Navy), #005a9c (Sapphire), #60c1e5 (Sky Aqua), #a0e0ef (Ice Cyan)
      ======================================================================== */
-  --bg-body: #10151d;                /* Natural Deep Slate Void (Solid, No Gradients) */
-  --bg-surface: #171f2b;             /* Natural Elevated Surface */
-  --bg-card: #1c2635;                /* Natural Slate Card (Solid) */
-  --bg-card-hover: #222e40;          /* Subtle Solid Hover */
-  --bg-card-glass: #1c2635;          /* Solid Opaque Surface */
-  --bg-input: #151d29;               /* Recessed Solid Input */
-  --bg-subtle: #141c28;
-  --bg-active: #23354f;
+  --bg-body: #0a1424;                /* Deep nocturnal navy void foundation */
+  --bg-surface: #12223a;             /* Elevated navy surface */
+  --bg-card: #1b365d;                /* Exact signature card navy (#1b365d) */
+  --bg-card-hover: #224373;          /* Rich interactive card hover */
+  --bg-card-glass: rgba(27, 54, 93, 0.72);
+  --bg-input: #0f1d33;               /* Recessed solid input */
+  --bg-subtle: #142845;
+  --bg-active: #005a9c;              /* Exact sapphire blue active (#005a9c) */
 
-  --border-color: #273447;           /* Solid Slate Border */
-  --border-hover: #3b5275;
-  --border-subtle: #1f2b3b;
+  --border-color: rgba(96, 193, 229, 0.2);  /* Luminous sky aqua hairline border */
+  --border-hover: #60c1e5;                  /* Exact sky aqua border hover (#60c1e5) */
+  --border-subtle: rgba(27, 54, 93, 0.85);
 
-  --text-primary: #f1f5f9;           /* Clean Solid Off-White */
-  --text-secondary: #94a3b8;         /* Cool Natural Slate */
-  --text-muted: #64748b;             /* Muted Slate */
-  --text-inverse: #10151d;
+  --text-primary: #f0f9fc;           /* Clean luminous off-white */
+  --text-secondary: #a0e0ef;         /* Exact pale ice cyan (#a0e0ef) */
+  --text-muted: #7ca8c2;             /* Muted ocean slate */
+  --text-inverse: #0a1424;
 
-  /* Solid Natural Accents (Humanistic & Corporate) */
-  --primary: #2563eb;                /* Solid Deep Cobalt Blue */
-  --primary-rgb: 37, 99, 235;
-  --primary-hover: #1d4ed8;
-  --primary-light: rgba(37, 99, 235, 0.12);
+  /* Color Hunt Signature Accents */
+  --primary: #60c1e5;                /* Exact sky aqua accent (#60c1e5) */
+  --primary-rgb: 96, 193, 229;
+  --primary-hover: #8be0ff;
+  --primary-light: rgba(96, 193, 229, 0.15);
+  --btn-primary-text: #071b2b;       /* Maximum contrast dark navy text on aqua */
 
-  --secondary: #0d9488;              /* Solid Spruce / Pine Teal */
-  --secondary-rgb: 13, 148, 136;
-  --secondary-light: rgba(13, 148, 136, 0.12);
+  --secondary: #005a9c;              /* Exact royal sapphire blue (#005a9c) */
+  --secondary-rgb: 0, 90, 156;
+  --secondary-light: rgba(0, 90, 156, 0.25);
 
-  --success: #15803d;                /* Solid Forest Green */
-  --success-rgb: 21, 128, 61;
-  --success-light: rgba(21, 128, 61, 0.12);
+  --accent-navy: #1b365d;            /* Exact palette navy (#1b365d) */
+  --accent-cyan: #a0e0ef;            /* Exact palette ice cyan (#a0e0ef) */
 
-  --warning: #b45309;                /* Solid Warm Amber / Ochre */
-  --warning-rgb: 180, 83, 9;
-  --warning-light: rgba(180, 83, 9, 0.12);
+  --success: #10b981;                /* Forest Emerald */
+  --success-rgb: 16, 185, 129;
+  --success-light: rgba(16, 185, 129, 0.15);
 
-  --danger: #b91c1c;                 /* Solid Brick Crimson */
-  --danger-rgb: 185, 28, 28;
-  --danger-light: rgba(185, 28, 28, 0.12);
+  --warning: #f59e0b;                /* Warm Amber */
+  --warning-rgb: 245, 158, 11;
+  --warning-light: rgba(245, 158, 11, 0.15);
 
-  --purple: #6d28d9;                 /* Solid Deep Plum */
-  --purple-rgb: 109, 40, 217;
-  --purple-light: rgba(109, 40, 217, 0.12);
+  --danger: #ef4444;                 /* Crimson Rose */
+  --danger-rgb: 239, 68, 68;
+  --danger-light: rgba(239, 68, 68, 0.15);
+
+  --purple: #818cf8;                 /* Soft Indigo Plum */
+  --purple-rgb: 129, 140, 248;
+  --purple-light: rgba(129, 140, 248, 0.15);
 
   /* Elevation Shadows (Soft Natural Diffusion) */
-  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.25);
-  --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.28);
-  --shadow-lg: 0 10px 24px rgba(0, 0, 0, 0.35);
+  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.35);
+  --shadow-md: 0 4px 14px rgba(0, 0, 0, 0.4);
+  --shadow-lg: 0 12px 28px rgba(0, 0, 0, 0.5);
 
   /* Dimensions */
   --sidebar-width: 260px;
@@ -76,30 +82,45 @@
 }
 
 /* ==========================================================================
-   SOLID NATURAL PALETTE - LIGHT MODE (Calm Stone & Deep Slate)
+   COLOR HUNT PALETTE - LIGHT MODE
+   https://colorhunt.co/palette/071b2b167d8db9e4e8eeeeee
+   #071b2b (Prussian Midnight), #167d8d (Deep Teal), #b9e4e8 (Ice Aqua), #eeeeee (Base Light)
    ========================================================================== */
 [data-theme="light"] {
-  --bg-body: #f4f6f8;                /* Solid Natural Light Stone/Slate */
-  --bg-surface: #ffffff;             /* Solid Crisp White */
-  --bg-card: #ffffff;
-  --bg-card-hover: #f8fafc;
-  --bg-card-glass: #ffffff;
-  --bg-input: #f0f3f6;
-  --bg-subtle: #f8fafc;
-  --bg-active: #e8eef8;
+  --bg-body: #eeeeee;                /* Exact light foundation (#eeeeee) */
+  --bg-surface: #ffffff;             /* Crisp pure white */
+  --bg-card: #ffffff;                /* Crisp white card surface */
+  --bg-card-hover: #f3fafb;          /* Soft ice aqua tint */
+  --bg-card-glass: rgba(255, 255, 255, 0.88);
+  --bg-input: #ffffff;
+  --bg-subtle: #e6f5f7;              /* Soft ice aqua container (#b9e4e8 blend) */
+  --bg-active: #b9e4e8;              /* Exact ice aqua active highlight (#b9e4e8) */
 
-  --border-color: #e2e8f0;           /* Soft Solid Border */
-  --border-hover: #cbd5e1;
-  --border-subtle: #f1f5f9;
+  --border-color: #d0e6e9;           /* Clean ice aqua border tone */
+  --border-hover: #167d8d;           /* Exact deep teal border hover (#167d8d) */
+  --border-subtle: #e3eff1;
 
-  --text-primary: #0f172a;           /* Solid Slate Black */
-  --text-secondary: #475569;         /* Natural Charcoal */
-  --text-muted: #94a3b8;
+  --text-primary: #071b2b;           /* Exact midnight prussian text (#071b2b) */
+  --text-secondary: #167d8d;         /* Exact deep teal secondary text (#167d8d) */
+  --text-muted: #577885;             /* Muted ocean slate */
   --text-inverse: #ffffff;
 
-  --shadow-sm: 0 1px 3px rgba(15, 23, 42, 0.05);
-  --shadow-md: 0 4px 12px rgba(15, 23, 42, 0.06);
-  --shadow-lg: 0 10px 25px rgba(15, 23, 42, 0.08);
+  --primary: #167d8d;                /* Exact deep teal accent (#167d8d) */
+  --primary-rgb: 22, 125, 141;
+  --primary-hover: #0f5c68;
+  --primary-light: rgba(22, 125, 141, 0.12);
+  --btn-primary-text: #ffffff;       /* Crisp white text on deep teal */
+
+  --secondary: #071b2b;              /* Exact midnight prussian (#071b2b) */
+  --secondary-rgb: 7, 27, 43;
+  --secondary-light: rgba(7, 27, 43, 0.08);
+
+  --accent-ice: #b9e4e8;             /* Exact ice aqua (#b9e4e8) */
+  --accent-ice-rgb: 185, 228, 232;
+
+  --shadow-sm: 0 1px 3px rgba(7, 27, 43, 0.06);
+  --shadow-md: 0 4px 14px rgba(7, 27, 43, 0.08);
+  --shadow-lg: 0 12px 28px rgba(7, 27, 43, 0.1);
 }
 
 /* Base Styles */
@@ -330,14 +351,14 @@ input:focus, select:focus, textarea:focus {
 }
 
 .menu-item.active {
-  color: #ffffff;
+  color: var(--btn-primary-text, #ffffff);
   background: var(--primary);
   font-weight: 600;
   box-shadow: var(--shadow-sm);
 }
 
 .menu-item.active i {
-  color: #ffffff;
+  color: var(--btn-primary-text, #ffffff);
 }
 
 .menu-badge {
@@ -357,8 +378,10 @@ input:focus, select:focus, textarea:focus {
 }
 
 .menu-badge.badge-hot {
-  background: var(--danger);
-  color: #fff;
+  background: rgba(37, 99, 235, 0.12);
+  color: #3b82f6;
+  border: 1px solid rgba(37, 99, 235, 0.25);
+  font-weight: 600;
 }
 
 /* Sidebar Footer (User Card) */
@@ -727,7 +750,7 @@ input:focus, select:focus, textarea:focus {
   display: flex;
   align-items: center;
   justify-content: center;
-  color: #fff;
+  color: var(--btn-primary-text, #ffffff);
   font-size: 0.85rem;
   box-shadow: var(--shadow-sm);
   transform: translateX(0);
@@ -736,7 +759,8 @@ input:focus, select:focus, textarea:focus {
 
 [data-theme="light"] .theme-switch-thumb {
   transform: translateX(30px);
-  background: #b45309;
+  background: #167d8d;
+  color: #ffffff;
 }
 
 /* User Profile Header Dropdown */
@@ -891,13 +915,13 @@ input:focus, select:focus, textarea:focus {
 
 .btn-primary {
   background: var(--primary);
-  color: #ffffff;
+  color: var(--btn-primary-text, #ffffff);
   box-shadow: var(--shadow-sm);
 }
 
 .btn-primary:hover {
   background: var(--primary-hover);
-  color: #fff;
+  color: var(--btn-primary-text, #ffffff);
 }
 
 .btn-secondary {
@@ -1478,4 +1502,395 @@ input:focus, select:focus, textarea:focus {
   .app-content {
     padding: 1.25rem 1rem;
   }
+}
+
+/* ==========================================================================
+   AUTHENTICATION VIEW - GLASSMORPHISM & AMBIENT GLOW (UNSLOP REFINED)
+   ========================================================================== */
+.auth-page-root {
+  min-height: 100vh;
+  width: 100%;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  background-color: var(--bg-body);
+  padding: 1.5rem 1rem;
+}
+
+/* Background Ambient Glow Elements - Soft, Subtle, Zero Eye Strain */
+.auth-bg-ambient {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  pointer-events: none;
+  z-index: 1;
+}
+
+.glow-orb {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(100px);
+  opacity: 0.45;
+  will-change: transform;
+}
+
+/* Dark Mode Glow Orbs: #005a9c (Sapphire), #60c1e5 (Sky Aqua), #a0e0ef (Ice Cyan) */
+.glow-orb-1 {
+  width: 560px;
+  height: 560px;
+  top: -120px;
+  left: -80px;
+  background: radial-gradient(circle, rgba(0, 90, 156, 0.4) 0%, rgba(27, 54, 93, 0.08) 60%, transparent 80%);
+  animation: ambientFloat1 22s ease-in-out infinite alternate;
+}
+
+.glow-orb-2 {
+  width: 480px;
+  height: 480px;
+  bottom: -100px;
+  right: -60px;
+  background: radial-gradient(circle, rgba(96, 193, 229, 0.3) 0%, rgba(0, 90, 156, 0.05) 60%, transparent 80%);
+  animation: ambientFloat2 26s ease-in-out infinite alternate;
+}
+
+.glow-orb-3 {
+  width: 400px;
+  height: 400px;
+  top: 42%;
+  left: 55%;
+  transform: translate(-50%, -50%);
+  background: radial-gradient(circle, rgba(160, 224, 239, 0.22) 0%, rgba(27, 54, 93, 0.04) 65%, transparent 80%);
+  animation: ambientFloat3 18s ease-in-out infinite alternate;
+}
+
+/* Light Mode Glow Orbs: #167d8d (Teal), #b9e4e8 (Ice Aqua), #071b2b (Midnight) */
+[data-theme="light"] .glow-orb-1 {
+  background: radial-gradient(circle, rgba(22, 125, 141, 0.25) 0%, rgba(185, 228, 232, 0.08) 60%, transparent 80%);
+}
+
+[data-theme="light"] .glow-orb-2 {
+  background: radial-gradient(circle, rgba(185, 228, 232, 0.55) 0%, rgba(238, 238, 238, 0.1) 60%, transparent 80%);
+}
+
+[data-theme="light"] .glow-orb-3 {
+  background: radial-gradient(circle, rgba(7, 27, 43, 0.08) 0%, transparent 70%);
+}
+
+@keyframes ambientFloat1 {
+  0% { transform: translate(0, 0) scale(1); }
+  50% { transform: translate(35px, 25px) scale(1.05); }
+  100% { transform: translate(-20px, 45px) scale(0.96); }
+}
+
+@keyframes ambientFloat2 {
+  0% { transform: translate(0, 0) scale(1); }
+  50% { transform: translate(-25px, -35px) scale(1.06); }
+  100% { transform: translate(20px, -20px) scale(0.97); }
+}
+
+@keyframes ambientFloat3 {
+  0% { transform: translate(-50%, -50%) scale(0.96); }
+  50% { transform: translate(-46%, -54%) scale(1.04); }
+  100% { transform: translate(-54%, -46%) scale(0.98); }
+}
+
+/* Glassmorphism Auth Card */
+.auth-glass-card {
+  position: relative;
+  z-index: 10;
+  width: 100%;
+  max-width: 460px;
+  background: rgba(27, 54, 93, 0.68);
+  backdrop-filter: blur(20px) saturate(160%);
+  -webkit-backdrop-filter: blur(20px) saturate(160%);
+  border: 1px solid rgba(96, 193, 229, 0.25);
+  border-radius: var(--radius-xl);
+  padding: 2.25rem 2rem;
+  box-shadow: 
+    0 0 0 1px rgba(160, 224, 239, 0.12) inset,
+    0 20px 45px -12px rgba(7, 27, 43, 0.7),
+    0 0 35px rgba(0, 90, 156, 0.15);
+  transition: box-shadow var(--transition-normal), border-color var(--transition-normal);
+}
+
+[data-theme="light"] .auth-glass-card {
+  background: rgba(255, 255, 255, 0.88);
+  border: 1px solid rgba(185, 228, 232, 0.95);
+  box-shadow: 
+    0 0 0 1px rgba(255, 255, 255, 0.95) inset,
+    0 20px 40px -15px rgba(7, 27, 43, 0.08),
+    0 4px 12px rgba(22, 125, 141, 0.04);
+}
+
+/* Glass Brand Header */
+.auth-glass-brand {
+  text-align: center;
+  margin-bottom: 1.75rem;
+}
+
+.auth-glass-icon {
+  width: 54px;
+  height: 54px;
+  margin: 0 auto 0.85rem auto;
+  background: linear-gradient(135deg, #005a9c, #1b365d);
+  color: #a0e0ef;
+  border-radius: var(--radius-lg);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.55rem;
+  border: 1px solid rgba(96, 193, 229, 0.4);
+  box-shadow: 0 8px 20px -4px rgba(0, 90, 156, 0.5);
+}
+
+[data-theme="light"] .auth-glass-icon {
+  background: linear-gradient(135deg, #167d8d, #071b2b);
+  color: #b9e4e8;
+  border-color: rgba(185, 228, 232, 0.8);
+  box-shadow: 0 8px 20px -4px rgba(22, 125, 141, 0.35);
+}
+
+.auth-glass-title {
+  font-size: 1.6rem;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  color: var(--text-primary);
+  margin-bottom: 0.35rem;
+}
+
+.auth-glass-subtitle {
+  font-size: 0.84rem;
+  color: var(--text-secondary);
+  line-height: 1.45;
+  margin: 0;
+}
+
+/* Glass Inputs */
+.glass-input {
+  width: 100%;
+  padding: 0.72rem 1rem 0.72rem 2.6rem;
+  background: rgba(16, 32, 56, 0.6);
+  border: 1px solid rgba(96, 193, 229, 0.22);
+  border-radius: var(--radius-md);
+  color: var(--text-primary);
+  font-size: 0.88rem;
+  font-family: inherit;
+  transition: all var(--transition-fast);
+  backdrop-filter: blur(10px);
+}
+
+.glass-input-plain {
+  padding-left: 1rem !important;
+}
+
+[data-theme="light"] .glass-input {
+  background: #ffffff;
+  border-color: rgba(22, 125, 141, 0.3);
+  color: #071b2b;
+}
+
+.glass-input:focus {
+  outline: none;
+  background: rgba(16, 32, 56, 0.85);
+  border-color: #60c1e5;
+  box-shadow: 0 0 0 3px rgba(96, 193, 229, 0.25);
+}
+
+[data-theme="light"] .glass-input:focus {
+  background: #ffffff;
+  border-color: #167d8d;
+  box-shadow: 0 0 0 3px rgba(22, 125, 141, 0.18);
+}
+
+/* New User / Register Switch Section */
+.auth-switch-prompt {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  margin-top: 1.25rem;
+  padding-top: 1.15rem;
+  border-top: 1px solid rgba(96, 193, 229, 0.15);
+}
+
+[data-theme="light"] .auth-switch-prompt {
+  border-top-color: #d0e6e9;
+}
+
+.auth-switch-text {
+  font-size: 0.86rem;
+  color: var(--text-secondary);
+}
+
+.auth-switch-btn {
+  background: rgba(96, 193, 229, 0.12);
+  border: 1px solid rgba(96, 193, 229, 0.35);
+  color: #60c1e5;
+  font-size: 0.85rem;
+  font-weight: 700;
+  padding: 0.38rem 0.9rem;
+  border-radius: var(--radius-full);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+}
+
+[data-theme="light"] .auth-switch-btn {
+  background: rgba(22, 125, 141, 0.1);
+  border-color: rgba(22, 125, 141, 0.3);
+  color: #167d8d;
+}
+
+.auth-switch-btn:hover {
+  background: var(--primary);
+  color: var(--btn-primary-text, #ffffff);
+  border-color: var(--primary);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 10px rgba(96, 193, 229, 0.3);
+}
+
+[data-theme="light"] .auth-switch-btn:hover {
+  box-shadow: 0 4px 10px rgba(22, 125, 141, 0.25);
+}
+
+/* Seeded DB Section */
+.glass-seeded-drawer {
+  margin-top: 1.25rem;
+  padding: 0.95rem;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(96, 193, 229, 0.15);
+  border-radius: var(--radius-lg);
+  backdrop-filter: blur(8px);
+}
+
+[data-theme="light"] .glass-seeded-drawer {
+  background: #f4fbfb;
+  border-color: #d0e6e9;
+}
+
+.glass-seed-btn {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  padding: 0.55rem 0.75rem;
+  background: rgba(18, 36, 61, 0.6);
+  border: 1px solid rgba(96, 193, 229, 0.18);
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  text-align: left;
+  width: 100%;
+}
+
+[data-theme="light"] .glass-seed-btn {
+  background: #ffffff;
+  border-color: #d0e6e9;
+}
+
+.glass-seed-btn:hover {
+  border-color: var(--primary);
+  background: var(--primary-light);
+  transform: translateY(-1px);
+}
+
+/* Floating Theme Switcher on Auth Screen */
+.auth-theme-toggle {
+  position: absolute;
+  top: 1.5rem;
+  right: 1.5rem;
+  z-index: 20;
+}
+
+/* Responsive adjustments */
+@media (max-width: 480px) {
+  .auth-glass-card {
+    padding: 1.65rem 1.25rem;
+    border-radius: var(--radius-lg);
+  }
+  .glow-orb-1, .glow-orb-2, .glow-orb-3 {
+    filter: blur(70px);
+    opacity: 0.35;
+  }
+  .auth-theme-toggle {
+    top: 1rem;
+    right: 1rem;
+  }
+}
+
+/* ==========================================================================
+   UNSLOP CRAFTSMANSHIP PASS - ELEVATED TYPOGRAPHY, SPACING & POLISH
+   ========================================================================== */
+*, *::before, *::after {
+  box-sizing: border-box;
+}
+
+:focus-visible {
+  outline: 2px solid var(--primary) !important;
+  outline-offset: 2px !important;
+}
+
+h1, .page-title {
+  letter-spacing: -0.025em;
+  font-feature-settings: "cv02", "cv05", "tnum";
+}
+
+h2, .auth-glass-title {
+  letter-spacing: -0.02em;
+}
+
+h3, .card-title {
+  letter-spacing: -0.015em;
+  font-weight: 700;
+}
+
+.kpi-card-value,
+.metric-value,
+.stat-value,
+.readout-score {
+  font-variant-numeric: tabular-nums lining-nums;
+  letter-spacing: -0.03em;
+}
+
+.kpi-card {
+  transition: transform var(--transition-fast), border-color var(--transition-fast), box-shadow var(--transition-fast);
+}
+
+.kpi-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 24px -6px rgba(0, 0, 0, 0.4);
+}
+
+[data-theme="light"] .kpi-card:hover {
+  box-shadow: 0 10px 24px -6px rgba(15, 23, 42, 0.08);
+}
+
+.btn {
+  transition: transform var(--transition-fast), background-color var(--transition-fast), border-color var(--transition-fast), box-shadow var(--transition-fast);
+}
+
+.btn:active {
+  transform: scale(0.98);
+}
+
+/* Restrained, Quiet Chrome scrollbar */
+::-webkit-scrollbar {
+  width: 7px;
+  height: 7px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--border-color);
+  border-radius: var(--radius-full);
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--border-hover);
 }

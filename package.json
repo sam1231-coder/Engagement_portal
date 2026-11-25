@@ -7,10 +7,10 @@
     "node": ">=20.0.0"
   },
   "scripts": {
-    "start": "node server.js",
-    "dev": "node server.js",
-    "py": "python server.py",
-    "test": "node -e \"const db = require('./db.js'); console.log('Database verification passed:', db.getAdminStats());\""
+    "start": "node backend/server.js",
+    "dev": "node backend/server.js",
+    "py": "python backend/server.py",
+    "test": "node -e \"const db = require('./backend/db.js'); console.log('Database verification passed:', db.getAdminStats());\""
   },
   "keywords": [
     "people-analytics",

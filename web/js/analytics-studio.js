@@ -608,14 +608,18 @@ const AnalyticsStudio = (function () {
     });
   }
 
-  // Refined Color Theory Palettes (Solid Natural Colors, Zero Gradients)
+  // Refined Color Theory Palettes (Mapped to Active Color Hunt Theme)
   function getPaletteColors(palette, count) {
+    const isDark = document.documentElement.getAttribute("data-theme") !== "light";
+    const primaryHex = isDark ? "#60c1e5" : "#167d8d";
+    const primaryRgb = isDark ? "96, 193, 229" : "22, 125, 141";
+
     const palettes = {
       sapphire: {
-        solid: "#2563eb",
-        border: Array(count).fill("#2563eb"),
-        bg: Array(count).fill("rgba(37, 99, 235, 0.85)"),
-        fillColor: "rgba(37, 99, 235, 0.12)"
+        solid: primaryHex,
+        border: Array(count).fill(primaryHex),
+        bg: Array(count).fill(`rgba(${primaryRgb}, 0.85)`),
+        fillColor: `rgba(${primaryRgb}, 0.14)`
       },
       emerald: {
         solid: "#15803d",

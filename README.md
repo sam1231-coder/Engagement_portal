@@ -2,8 +2,6 @@
 
 Humanly is an enterprise-grade people analytics, employee engagement, and workplace culture platform. Engineered with a natural solid palette, full client-side route protection, and a production-grade database backend, the platform delivers a cohesive operational environment for leadership and employees alike.
 
----
-
 Repository Architecture and Workspace Schema
 
 The codebase is organized into dedicated functional directories, separating core application assets, database management files, operational documentation, and user interfaces.
@@ -77,13 +75,13 @@ Default Pre-Seeded Accounts
 
 The platform includes pre-configured workforce accounts for immediate evaluation:
 
-| Persona | Email | Password | Assigned Role | System Access Scope |
-| :--- | :--- | :--- | :--- | :--- |
-| Elena Rostova | admin@humanly.io | Admin@2026! | admin | Full Executive Control and User Management |
-| Sarah Jenkins | sarah.ops@humanly.io | Humanly@2026! | admin | People Operations and Workforce Console |
-| Alex Vance | alex.vance@humanly.io | Employee@2026! | employee | Core Employee Portal and Engagement Tools |
-| Maya Lin | maya.lin@humanly.io | Employee@2026! | employee | Core Employee Portal and Engagement Tools |
-| David Chen | david.chen@humanly.io | Employee@2026! | employee | Core Employee Portal and Engagement Tools |
+| Persona       | Email                 | Password       | Assigned Role | System Access Scope                        |
+| :------------ | :-------------------- | :------------- | :------------ | :----------------------------------------- |
+| Elena Rostova | admin@humanly.io      | Admin@2026!    | admin         | Full Executive Control and User Management |
+| Sarah Jenkins | sarah.ops@humanly.io  | Humanly@2026!  | admin         | People Operations and Workforce Console    |
+| Alex Vance    | alex.vance@humanly.io | Employee@2026! | employee      | Core Employee Portal and Engagement Tools  |
+| Maya Lin      | maya.lin@humanly.io   | Employee@2026! | employee      | Core Employee Portal and Engagement Tools  |
+| David Chen    | david.chen@humanly.io | Employee@2026! | employee      | Core Employee Portal and Engagement Tools  |
 
 New team members may also be provisioned through the registration interface on the sign-in page or through the administrator management console.
 

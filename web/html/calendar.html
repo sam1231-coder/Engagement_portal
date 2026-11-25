@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Settings • Humanly</title>
+  <title>Calendar & Meetings • Humanly</title>
 
   <!-- External Fonts & Icons -->
   <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -12,11 +12,14 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
 
   <!-- Core App Stylesheets -->
-  <link rel="stylesheet" href="css/humanly.css" />
-  <link rel="stylesheet" href="css/components.css" />
+  <link rel="stylesheet" href="../css/humanly.css" />
+  <link rel="stylesheet" href="../css/components.css" />
 
   <!-- Auth Guard (Enforces authentication before loading page) -->
-  <script src="js/auth-guard.js"></script>
+  <script src="../js/auth-guard.js"></script>
+
+  <!-- Canvas Confetti -->
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.2/dist/confetti.browser.min.js"></script>
 </head>
 <body>
   <div class="app-container">
@@ -63,7 +66,7 @@
           <span class="menu-badge">Feed</span>
         </a>
 
-        <a href="calendar.html" class="menu-item">
+        <a href="calendar.html" class="menu-item active">
           <i class="fa-regular fa-calendar-days"></i>
           <span class="menu-label">Calendar & Meetings</span>
           <span class="menu-badge" style="background: rgba(37, 99, 235, 0.2); color: var(--primary);">Sync</span>
@@ -76,7 +79,7 @@
           <span class="menu-label">Team Directory</span>
         </a>
 
-        <a href="settings.html" class="menu-item active">
+        <a href="settings.html" class="menu-item">
           <i class="fa-solid fa-sliders"></i>
           <span class="menu-label">Settings</span>
         </a>
@@ -167,68 +170,151 @@
             <div class="page-breadcrumbs">
               <a href="dashboard.html">Humanly</a>
               <i class="fa-solid fa-chevron-right" style="font-size: 0.6rem;"></i>
-              <span>Settings</span>
+              <span>Calendar & Meetings</span>
             </div>
-            <h1 class="page-title">Settings & System Preferences</h1>
-            <p class="page-subtitle">Configure executive color theory palettes, audio chimes, meeting API webhooks, and account options.</p>
+            <h1 class="page-title">Team Calendar & Meeting Schedule</h1>
+            <p class="page-subtitle">Sync 1-on-1s, townhalls, and pulse reviews directly with Google Meet, Teams, and Zoom APIs.</p>
+          </div>
+          <div class="page-header-actions">
+            <button class="btn btn-secondary" id="syncCalendarApiBtn">
+              <i class="fa-solid fa-rotate"></i> Sync Meeting APIs
+            </button>
+            <button class="btn btn-primary" id="openScheduleMeetingBtn">
+              <i class="fa-regular fa-calendar-plus"></i> Schedule Meeting
+            </button>
           </div>
         </div>
 
-        <div style="max-width: 780px;">
-          <!-- Color Theory Palette Configuration -->
-          <div class="card" style="margin-bottom: 1.5rem;">
-            <h3 style="font-size: 1.1rem; margin-bottom: 1rem;">Color Theory & Executive Palette</h3>
-            <div style="display: flex; align-items: center; gap: 1rem; margin-bottom: 1.5rem;">
-              <span style="font-size: 0.88rem; font-weight: 600;">Theme Accents:</span>
-              <div style="display: flex; gap: 0.6rem;">
-                <button class="accent-color-pill active" data-color="#2563eb" title="Cerulean Sapphire (Executive)" style="width: 28px; height: 28px; border-radius: 50%; background: #2563eb; border: 2px solid #fff;"></button>
-                <button class="accent-color-pill" data-color="#059669" title="Emerald Sage (Growth)" style="width: 28px; height: 28px; border-radius: 50%; background: #059669; border: 2px solid transparent;"></button>
-                <button class="accent-color-pill" data-color="#0d9488" title="Teal Horizon (Psychological Safety)" style="width: 28px; height: 28px; border-radius: 50%; background: #0d9488; border: 2px solid transparent;"></button>
-                <button class="accent-color-pill" data-color="#7c3aed" title="Imperial Violet" style="width: 28px; height: 28px; border-radius: 50%; background: #7c3aed; border: 2px solid transparent;"></button>
-                <button class="accent-color-pill" data-color="#d97706" title="Warm Amber Gold" style="width: 28px; height: 28px; border-radius: 50%; background: #d97706; border: 2px solid transparent;"></button>
-              </div>
-            </div>
-
-            <div style="display: flex; align-items: center; justify-content: space-between; padding-top: 1rem; border-top: 1px solid var(--border-color);">
-              <div>
-                <strong style="display: block; font-size: 0.9rem;">Interactive Audio Synthesizer</strong>
-                <span style="font-size: 0.78rem; color: var(--text-muted);">Play soft synthesized micro-chimes for clicks, poll voting, and confirmations.</span>
-              </div>
-              <input type="checkbox" id="settingsSoundToggle" checked style="width: 20px; height: 20px; cursor: pointer;" />
-            </div>
+        <!-- Meeting Integrations Status Banner -->
+        <div class="calendar-integrations-bar">
+          <div class="integration-pills-row">
+            <span class="integration-pill">
+              <i class="fa-brands fa-google" style="color: #ea4335;"></i> Google Meet <i class="fa-solid fa-circle live-dot"></i>
+            </span>
+            <span class="integration-pill">
+              <i class="fa-brands fa-microsoft" style="color: #00a4ef;"></i> Microsoft Teams <i class="fa-solid fa-circle live-dot"></i>
+            </span>
+            <span class="integration-pill">
+              <i class="fa-solid fa-video" style="color: #2d8cff;"></i> Zoom API <i class="fa-solid fa-circle live-dot"></i>
+            </span>
           </div>
+          <span style="font-size: 0.75rem; color: var(--text-muted);">Auto-Sync Interval: Real-Time Webhook</span>
+        </div>
 
-          <!-- Active User Profile Card -->
-          <div class="card" style="margin-bottom: 1.5rem;">
-            <h3 style="font-size: 1.1rem; margin-bottom: 1rem;">Active User Profile</h3>
-            <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 1rem;">
-              <div style="display: flex; align-items: center; gap: 0.85rem;">
-                <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=100&auto=format&fit=crop&q=80" alt="Avatar" class="user-avatar" style="width: 52px; height: 52px; border-radius: 50%; object-fit: cover;" />
-                <div>
-                  <h4 class="user-name" style="font-size: 1.05rem;">Alex Vance</h4>
-                  <span class="user-role" style="font-size: 0.82rem; color: var(--text-muted);">Head of People Ops</span>
+        <!-- Calendar Layout -->
+        <div class="calendar-layout">
+          <!-- Calendar Card -->
+          <div class="calendar-card">
+            <div class="calendar-header-toolbar">
+              <div class="cal-month-nav">
+                <h3 class="cal-month-title" id="calMonthYearTitle">November 2026</h3>
+                <div style="display: flex; gap: 0.35rem;">
+                  <button class="cal-nav-btn" id="calPrevMonthBtn" title="Previous Month"><i class="fa-solid fa-chevron-left"></i></button>
+                  <button class="cal-nav-btn" id="calTodayBtn" title="Go to Today" style="font-size: 0.75rem; width: auto; padding: 0 0.6rem;">Today</button>
+                  <button class="cal-nav-btn" id="calNextMonthBtn" title="Next Month"><i class="fa-solid fa-chevron-right"></i></button>
                 </div>
               </div>
-              <button class="btn btn-secondary logout-trigger-btn">
-                <i class="fa-solid fa-arrow-right-from-bracket"></i> Sign Out
-              </button>
+
+              <div class="cal-filter-pills">
+                <button class="cal-filter-pill active" data-filter="all">All Events</button>
+                <button class="cal-filter-pill" data-filter="1on1">1-on-1s</button>
+                <button class="cal-filter-pill" data-filter="townhall">Town Halls</button>
+                <button class="cal-filter-pill" data-filter="pulse">Team Pulses</button>
+                <button class="cal-filter-pill" data-filter="workshop">Workshops</button>
+              </div>
             </div>
+
+            <!-- Weekdays Row -->
+            <div class="calendar-weekdays-row">
+              <div>Sun</div>
+              <div>Mon</div>
+              <div>Tue</div>
+              <div>Wed</div>
+              <div>Thu</div>
+              <div>Fri</div>
+              <div>Sat</div>
+            </div>
+
+            <!-- Days Grid -->
+            <div class="calendar-days-grid" id="calendarDaysGrid"></div>
           </div>
 
-          <!-- MERN Stack Transition Card -->
-          <div class="card">
-            <h3 style="font-size: 1.1rem; margin-bottom: 0.75rem;">MERN Stack Transition</h3>
-            <p style="font-size: 0.84rem; color: var(--text-secondary); line-height: 1.6; margin-bottom: 1rem;">
-              The application is segregated into dedicated, cleanly linked views. Each view (<code>dashboard.html</code>, <code>analytics.html</code>, <code>calendar.html</code>, etc.) maps directly to a React / Next.js component, and backend endpoints can plug seamlessly into MongoDB and Express REST APIs.
-            </p>
-            <div style="background: var(--bg-subtle); padding: 1rem; border-radius: var(--radius-md); font-size: 0.8rem; border-left: 3px solid var(--primary);">
-              <strong>Backend Ready:</strong> Pre-configured Python (<code>server.py</code>) and zero-dependency Node (<code>server.js</code>) HTTP servers are included in the repository.
+          <!-- Upcoming Agenda Column -->
+          <div>
+            <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 0.85rem;">
+              <h3 style="font-size: 1.05rem; font-weight: 700;">Meeting Agenda</h3>
+              <span class="badge badge-low" id="upcomingCountBadge">5 scheduled</span>
             </div>
+            <div class="upcoming-meetings-panel" id="upcomingMeetingsContainer"></div>
           </div>
         </div>
 
       </div>
     </main>
+  </div>
+
+  <!-- Schedule Meeting Modal -->
+  <div class="modal-overlay" id="scheduleMeetingModal">
+    <div class="modal-container">
+      <div class="modal-header">
+        <h3 class="modal-title"><i class="fa-regular fa-calendar-plus" style="color: var(--primary); margin-right: 0.5rem;"></i> Schedule Meeting / 1-on-1</h3>
+        <button class="modal-close-btn" id="closeScheduleModalBtn"><i class="fa-solid fa-xmark"></i></button>
+      </div>
+      <form id="scheduleMeetingForm">
+        <div class="modal-body">
+          <div style="margin-bottom: 1.15rem;">
+            <label style="display: block; font-size: 0.8rem; font-weight: 700; margin-bottom: 0.4rem;">Meeting Subject</label>
+            <input type="text" id="meetingTitleInput" placeholder="e.g. Sprint Check-In or Career Alignment" style="width: 100%;" required />
+          </div>
+
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1.15rem;">
+            <div>
+              <label style="display: block; font-size: 0.8rem; font-weight: 700; margin-bottom: 0.4rem;">Session Type</label>
+              <select id="meetingTypeSelect" style="width: 100%;">
+                <option value="1on1">1-on-1 Sync</option>
+                <option value="pulse">Team Pulse Review</option>
+                <option value="townhall">All-Hands Townhall</option>
+                <option value="workshop">Culture Workshop</option>
+              </select>
+            </div>
+
+            <div>
+              <label style="display: block; font-size: 0.8rem; font-weight: 700; margin-bottom: 0.4rem;">Video Platform</label>
+              <select id="meetingPlatformSelect" style="width: 100%;">
+                <option value="Google Meet">Google Meet</option>
+                <option value="Microsoft Teams">Microsoft Teams</option>
+                <option value="Zoom">Zoom</option>
+              </select>
+            </div>
+          </div>
+
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1.15rem;">
+            <div>
+              <label style="display: block; font-size: 0.8rem; font-weight: 700; margin-bottom: 0.4rem;">Date</label>
+              <input type="date" id="meetingDateInput" value="2026-11-25" style="width: 100%;" required />
+            </div>
+            <div>
+              <label style="display: block; font-size: 0.8rem; font-weight: 700; margin-bottom: 0.4rem;">Time Window</label>
+              <input type="text" id="meetingTimeInput" value="10:00 AM - 10:45 AM" style="width: 100%;" required />
+            </div>
+          </div>
+
+          <div style="margin-bottom: 1.15rem;">
+            <label style="display: block; font-size: 0.8rem; font-weight: 700; margin-bottom: 0.4rem;">Attendees (comma separated)</label>
+            <input type="text" id="meetingAttendeesInput" value="Marcus Vance, Alex Vance" style="width: 100%;" />
+          </div>
+
+          <div>
+            <label style="display: block; font-size: 0.8rem; font-weight: 700; margin-bottom: 0.4rem;">Agenda & Discussion Topics</label>
+            <textarea id="meetingNotesInput" rows="2" placeholder="Key goals, topics, and blockers..." style="width: 100%; resize: vertical;"></textarea>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" onclick="document.getElementById('scheduleMeetingModal').classList.remove('active')">Cancel</button>
+          <button type="submit" class="btn btn-primary"><i class="fa-solid fa-calendar-check"></i> Book & Sync Meeting</button>
+        </div>
+      </form>
+    </div>
   </div>
 
   <!-- Command Palette Modal (Ctrl+K) -->
@@ -247,7 +333,8 @@
   <div class="toast-container" id="toastContainer"></div>
 
   <!-- Application Scripts -->
-  <script src="js/sample-data.js"></script>
-  <script src="js/app.js"></script>
+  <script src="../js/sample-data.js"></script>
+  <script src="../js/calendar.js"></script>
+  <script src="../js/app.js"></script>
 </body>
 </html>

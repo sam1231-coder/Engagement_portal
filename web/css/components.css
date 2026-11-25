@@ -316,6 +316,85 @@
 }
 
 /* Studio Query & Visual Controls */
+/* ==========================================================================
+   Google Search Style Responsive Chart Readout & Cursor Crosshair
+   ========================================================================== */
+.google-graph-readout {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 0.5rem 1.5rem;
+  padding: 0.75rem 1rem 0.25rem 1rem;
+  transition: all var(--transition-fast);
+}
+
+.google-graph-readout .readout-primary {
+  display: flex;
+  align-items: baseline;
+  gap: 0.65rem;
+}
+
+.google-graph-readout .readout-score {
+  font-size: 1.85rem;
+  font-weight: 800;
+  letter-spacing: -0.03em;
+  color: var(--text-primary);
+  font-feature-settings: "tnum" 1, "cv05" 1;
+  line-height: 1;
+}
+
+.google-graph-readout .readout-label {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--text-secondary);
+}
+
+.google-graph-readout .readout-delta {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  font-size: 0.78rem;
+  font-weight: 700;
+  padding: 0.2rem 0.55rem;
+  border-radius: var(--radius-full);
+}
+
+.google-graph-readout .readout-delta.positive {
+  background: rgba(21, 128, 61, 0.15);
+  color: #22c55e;
+}
+
+.google-graph-readout .readout-delta.negative {
+  background: rgba(185, 28, 28, 0.15);
+  color: #ef4444;
+}
+
+.google-graph-readout .readout-secondary {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.82rem;
+  color: var(--text-muted);
+}
+
+.google-graph-readout .readout-date {
+  font-weight: 600;
+  color: var(--text-secondary);
+}
+
+.google-graph-readout .readout-dot {
+  opacity: 0.4;
+}
+
+.google-graph-readout .readout-enps {
+  font-weight: 500;
+}
+
+.google-graph-readout .readout-enps strong {
+  color: var(--primary);
+}
+
 .chart-controls-bar {
   display: flex;
   align-items: center;

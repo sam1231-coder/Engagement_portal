@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Review and survey • Humanly</title>
+  <title>Settings • Humanly</title>
 
   <!-- External Fonts & Icons -->
   <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -12,11 +12,11 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
 
   <!-- Core App Stylesheets -->
-  <link rel="stylesheet" href="css/humanly.css" />
-  <link rel="stylesheet" href="css/components.css" />
+  <link rel="stylesheet" href="../css/humanly.css" />
+  <link rel="stylesheet" href="../css/components.css" />
 
   <!-- Auth Guard (Enforces authentication before loading page) -->
-  <script src="js/auth-guard.js"></script>
+  <script src="../js/auth-guard.js"></script>
 </head>
 <body>
   <div class="app-container">
@@ -51,7 +51,7 @@
           <span class="menu-badge badge-hot">Studio</span>
         </a>
 
-        <a href="surveys.html" class="menu-item active">
+        <a href="surveys.html" class="menu-item">
           <i class="fa-solid fa-clipboard-question"></i>
           <span class="menu-label">Review and survey</span>
           <span class="menu-badge">3 Open</span>
@@ -76,7 +76,7 @@
           <span class="menu-label">Team Directory</span>
         </a>
 
-        <a href="settings.html" class="menu-item">
+        <a href="settings.html" class="menu-item active">
           <i class="fa-solid fa-sliders"></i>
           <span class="menu-label">Settings</span>
         </a>
@@ -167,126 +167,68 @@
             <div class="page-breadcrumbs">
               <a href="dashboard.html">Humanly</a>
               <i class="fa-solid fa-chevron-right" style="font-size: 0.6rem;"></i>
-              <span>Review and survey</span>
+              <span>Settings</span>
             </div>
-            <h1 class="page-title">Review and survey Campaigns</h1>
-            <p class="page-subtitle">Track feedback participation rates, psychological safety, and organizational review cycles.</p>
+            <h1 class="page-title">Settings & System Preferences</h1>
+            <p class="page-subtitle">Configure executive color theory palettes, audio chimes, meeting API webhooks, and account options.</p>
           </div>
         </div>
 
-        <!-- Active Surveys Cards Grid -->
-        <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(340px, 1fr)); gap: 1.5rem; margin-bottom: 2rem;" id="surveysListContainer"></div>
+        <div style="max-width: 780px;">
+          <!-- Color Theory Palette Configuration -->
+          <div class="card" style="margin-bottom: 1.5rem;">
+            <h3 style="font-size: 1.1rem; margin-bottom: 1rem;">Color Theory & Executive Palette</h3>
+            <div style="display: flex; align-items: center; gap: 1rem; margin-bottom: 1.5rem;">
+              <span style="font-size: 0.88rem; font-weight: 600;">Theme Accents:</span>
+              <div style="display: flex; gap: 0.6rem;">
+                <button class="accent-color-pill active" data-color="#2563eb" title="Cerulean Sapphire (Executive)" style="width: 28px; height: 28px; border-radius: 50%; background: #2563eb; border: 2px solid #fff;"></button>
+                <button class="accent-color-pill" data-color="#059669" title="Emerald Sage (Growth)" style="width: 28px; height: 28px; border-radius: 50%; background: #059669; border: 2px solid transparent;"></button>
+                <button class="accent-color-pill" data-color="#0d9488" title="Teal Horizon (Psychological Safety)" style="width: 28px; height: 28px; border-radius: 50%; background: #0d9488; border: 2px solid transparent;"></button>
+                <button class="accent-color-pill" data-color="#7c3aed" title="Imperial Violet" style="width: 28px; height: 28px; border-radius: 50%; background: #7c3aed; border: 2px solid transparent;"></button>
+                <button class="accent-color-pill" data-color="#d97706" title="Warm Amber Gold" style="width: 28px; height: 28px; border-radius: 50%; background: #d97706; border: 2px solid transparent;"></button>
+              </div>
+            </div>
 
-        <!-- Department Sentiment Heatmap -->
-        <div class="card">
-          <div class="card-header">
-            <div class="card-title-wrap">
-              <h3 class="card-title">Department Sentiment Matrix (Heatmap)</h3>
-              <span class="card-badge">Q4 2026 Audit</span>
+            <div style="display: flex; align-items: center; justify-content: space-between; padding-top: 1rem; border-top: 1px solid var(--border-color);">
+              <div>
+                <strong style="display: block; font-size: 0.9rem;">Interactive Audio Synthesizer</strong>
+                <span style="font-size: 0.78rem; color: var(--text-muted);">Play soft synthesized micro-chimes for clicks, poll voting, and confirmations.</span>
+              </div>
+              <input type="checkbox" id="settingsSoundToggle" checked style="width: 20px; height: 20px; cursor: pointer;" />
             </div>
           </div>
-          <div class="data-table-wrapper">
-            <table class="custom-table">
-              <thead>
-                <tr>
-                  <th>Department</th>
-                  <th>Satisfaction</th>
-                  <th>Work-Life Balance</th>
-                  <th>Leadership Trust</th>
-                  <th>Reward & Recognition</th>
-                  <th>Retention Health</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr>
-                  <td><strong>Engineering</strong></td>
-                  <td><span class="badge badge-low">92.4%</span></td>
-                  <td><span class="badge badge-medium">78.0%</span></td>
-                  <td><span class="badge badge-low">88.5%</span></td>
-                  <td><span class="badge badge-low">85.0%</span></td>
-                  <td><span class="badge badge-low">Strong</span></td>
-                </tr>
-                <tr>
-                  <td><strong>Product</strong></td>
-                  <td><span class="badge badge-low">91.0%</span></td>
-                  <td><span class="badge badge-low">84.2%</span></td>
-                  <td><span class="badge badge-low">90.1%</span></td>
-                  <td><span class="badge badge-low">89.4%</span></td>
-                  <td><span class="badge badge-low">Strong</span></td>
-                </tr>
-                <tr>
-                  <td><strong>Design</strong></td>
-                  <td><span class="badge badge-low">95.6%</span></td>
-                  <td><span class="badge badge-low">92.0%</span></td>
-                  <td><span class="badge badge-low">94.0%</span></td>
-                  <td><span class="badge badge-low">96.2%</span></td>
-                  <td><span class="badge badge-low">Peak</span></td>
-                </tr>
-                <tr>
-                  <td><strong>Marketing</strong></td>
-                  <td><span class="badge badge-medium">81.5%</span></td>
-                  <td><span class="badge badge-medium">72.4%</span></td>
-                  <td><span class="badge badge-low">83.0%</span></td>
-                  <td><span class="badge badge-medium">75.0%</span></td>
-                  <td><span class="badge badge-medium">Moderate</span></td>
-                </tr>
-                <tr>
-                  <td><strong>Sales</strong></td>
-                  <td><span class="badge badge-high">71.8%</span></td>
-                  <td><span class="badge badge-high">62.0%</span></td>
-                  <td><span class="badge badge-medium">76.5%</span></td>
-                  <td><span class="badge badge-medium">70.2%</span></td>
-                  <td><span class="badge badge-high">Watchlist</span></td>
-                </tr>
-              </tbody>
-            </table>
+
+          <!-- Active User Profile Card -->
+          <div class="card" style="margin-bottom: 1.5rem;">
+            <h3 style="font-size: 1.1rem; margin-bottom: 1rem;">Active User Profile</h3>
+            <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 1rem;">
+              <div style="display: flex; align-items: center; gap: 0.85rem;">
+                <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=100&auto=format&fit=crop&q=80" alt="Avatar" class="user-avatar" style="width: 52px; height: 52px; border-radius: 50%; object-fit: cover;" />
+                <div>
+                  <h4 class="user-name" style="font-size: 1.05rem;">Alex Vance</h4>
+                  <span class="user-role" style="font-size: 0.82rem; color: var(--text-muted);">Head of People Ops</span>
+                </div>
+              </div>
+              <button class="btn btn-secondary logout-trigger-btn">
+                <i class="fa-solid fa-arrow-right-from-bracket"></i> Sign Out
+              </button>
+            </div>
+          </div>
+
+          <!-- MERN Stack Transition Card -->
+          <div class="card">
+            <h3 style="font-size: 1.1rem; margin-bottom: 0.75rem;">MERN Stack Transition</h3>
+            <p style="font-size: 0.84rem; color: var(--text-secondary); line-height: 1.6; margin-bottom: 1rem;">
+              The application is segregated into dedicated, cleanly linked views. Each view (<code>dashboard.html</code>, <code>analytics.html</code>, <code>calendar.html</code>, etc.) maps directly to a React / Next.js component, and backend endpoints can plug seamlessly into MongoDB and Express REST APIs.
+            </p>
+            <div style="background: var(--bg-subtle); padding: 1rem; border-radius: var(--radius-md); font-size: 0.8rem; border-left: 3px solid var(--primary);">
+              <strong>Backend Ready:</strong> Pre-configured Python (<code>server.py</code>) and zero-dependency Node (<code>server.js</code>) HTTP servers are included in the repository.
+            </div>
           </div>
         </div>
 
       </div>
     </main>
-  </div>
-
-  <!-- Take Pulse Survey Modal -->
-  <div class="modal-overlay" id="takeSurveyModal">
-    <div class="modal-container">
-      <div class="modal-header">
-        <h3 class="modal-title" id="surveyModalTitle">Quick Pulse Review</h3>
-        <button class="modal-close-btn" id="closeTakeSurveyModal"><i class="fa-solid fa-xmark"></i></button>
-      </div>
-      <form id="takeSurveyForm">
-        <div class="modal-body">
-          <div style="margin-bottom: 1.5rem;">
-            <label style="display: block; font-size: 0.85rem; font-weight: 700; margin-bottom: 0.5rem;">1. Overall satisfaction with team velocity & psychological safety?</label>
-            <input type="hidden" id="selectedStarRating" value="5" />
-            <div style="display: flex; gap: 0.6rem; font-size: 1.5rem;">
-              <button class="star-rating-btn" data-star="1" style="color: #d97706;"><i class="fa-solid fa-star"></i></button>
-              <button class="star-rating-btn" data-star="2" style="color: #d97706;"><i class="fa-solid fa-star"></i></button>
-              <button class="star-rating-btn" data-star="3" style="color: #d97706;"><i class="fa-solid fa-star"></i></button>
-              <button class="star-rating-btn" data-star="4" style="color: #d97706;"><i class="fa-solid fa-star"></i></button>
-              <button class="star-rating-btn" data-star="5" style="color: #d97706;"><i class="fa-solid fa-star"></i></button>
-            </div>
-          </div>
-
-          <div style="margin-bottom: 1.5rem;">
-            <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem;">
-              <label style="font-size: 0.85rem; font-weight: 700;">2. Work-life balance index:</label>
-              <strong id="sliderBalanceVal" style="color: var(--primary);">8/10</strong>
-            </div>
-            <input type="range" id="surveyBalanceSlider" min="1" max="10" value="8" style="width: 100%;" />
-          </div>
-
-          <div>
-            <label style="display: block; font-size: 0.85rem; font-weight: 700; margin-bottom: 0.5rem;">3. Anonymous suggestions for squad leadership (optional):</label>
-            <textarea rows="2" placeholder="Share your perspective..." style="width: 100%; resize: vertical;"></textarea>
-          </div>
-        </div>
-        <div class="modal-footer">
-          <button type="button" class="btn btn-secondary" onclick="document.getElementById('takeSurveyModal').classList.remove('active')">Cancel</button>
-          <button type="submit" class="btn btn-success"><i class="fa-solid fa-check"></i> Submit Anonymously</button>
-        </div>
-      </form>
-    </div>
   </div>
 
   <!-- Command Palette Modal (Ctrl+K) -->
@@ -305,8 +247,7 @@
   <div class="toast-container" id="toastContainer"></div>
 
   <!-- Application Scripts -->
-  <script src="js/sample-data.js"></script>
-  <script src="js/surveys.js"></script>
-  <script src="js/app.js"></script>
+  <script src="../js/sample-data.js"></script>
+  <script src="../js/app.js"></script>
 </body>
 </html>

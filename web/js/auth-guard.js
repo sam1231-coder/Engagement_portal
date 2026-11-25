@@ -6,7 +6,7 @@
 
 const AuthGuard = (function () {
   const currentPage = window.location.pathname.split("/").pop() || "index.html";
-  const isLoginPage = currentPage === "login.html";
+  const isAuthPage = currentPage === "login.html" || currentPage === "register.html";
   const adminOnlyPages = ["admin-dashboard.html", "admin-users.html"];
 
   // 1. Session state from LocalStorage
@@ -24,11 +24,11 @@ const AuthGuard = (function () {
   }
 
   // 2. Strict Route Protection
-  if (!isLoggedIn && !isLoginPage) {
+  if (!isLoggedIn && !isAuthPage) {
     // Unauthenticated: Redirect to login
     window.location.replace("login.html");
-  } else if (isLoggedIn && isLoginPage) {
-    // Authenticated visiting login: Redirect based on role
+  } else if (isLoggedIn && isAuthPage) {
+    // Authenticated visiting auth pages: Redirect based on role
     if (currentUser && currentUser.role === "admin") {
       window.location.replace("admin-dashboard.html");
     } else {
@@ -77,7 +77,7 @@ const AuthGuard = (function () {
           badge.innerHTML = '<i class="fa-solid fa-shield-halved"></i> Administrator';
         } else {
           badge.style.background = "var(--primary)";
-          badge.style.color = "#ffffff";
+          badge.style.color = "var(--btn-primary-text, #ffffff)";
           badge.innerHTML = '<i class="fa-solid fa-user"></i> Employee';
         }
         headerTitle.appendChild(badge);

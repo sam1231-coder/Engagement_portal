@@ -12,11 +12,11 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
 
   <!-- Core App Stylesheets with Precision Color Theory -->
-  <link rel="stylesheet" href="css/humanly.css" />
-  <link rel="stylesheet" href="css/components.css" />
+  <link rel="stylesheet" href="../css/humanly.css" />
+  <link rel="stylesheet" href="../css/components.css" />
 
   <!-- Auth Guard (Enforces authentication before loading page) -->
-  <script src="js/auth-guard.js"></script>
+  <script src="../js/auth-guard.js"></script>
 
   <!-- High-Performance Client-Side CDN Libraries -->
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
@@ -281,6 +281,20 @@
               </div>
             </div>
 
+            <!-- Google Search Style Dynamic Live Metric Readout -->
+            <div class="google-graph-readout" id="googleGraphReadout">
+              <div class="readout-primary">
+                <span class="readout-score" id="readoutScore">86.4%</span>
+                <span class="readout-label">Engagement</span>
+                <span class="readout-delta positive" id="readoutDelta"><i class="fa-solid fa-arrow-trend-up"></i> +0.5%</span>
+              </div>
+              <div class="readout-secondary">
+                <span class="readout-date" id="readoutDate">Nov 2026 (Latest)</span>
+                <span class="readout-dot">•</span>
+                <span class="readout-enps" id="readoutEnps">eNPS: <strong>+68</strong></span>
+              </div>
+            </div>
+
             <!-- Clear Axis Indicators -->
             <div class="chart-axis-info" style="margin: 0.5rem 0.75rem 0.5rem 0.75rem;">
               <div class="axis-badge">
@@ -440,9 +454,9 @@
   <div class="toast-container" id="toastContainer"></div>
 
   <!-- Application Scripts -->
-  <script src="js/sample-data.js"></script>
-  <script src="js/dashboard.js"></script>
-  <script src="js/kudos.js"></script>
-  <script src="js/app.js"></script>
+  <script src="../js/sample-data.js"></script>
+  <script src="../js/dashboard.js"></script>
+  <script src="../js/kudos.js"></script>
+  <script src="../js/app.js"></script>
 </body>
 </html>
