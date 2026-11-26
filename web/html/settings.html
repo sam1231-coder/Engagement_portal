@@ -28,7 +28,7 @@
           <div class="brand-icon"><i class="fa-solid fa-users-viewfinder"></i></div>
           <div class="brand-title">
             <span class="title-main">HUMANLY</span>
-            <span class="title-sub">PEOPLE & ENGAGEMENT</span>
+            <span class="title-sub">PEOPLE &amp; ENGAGEMENT</span>
           </div>
         </a>
         <button class="sidebar-collapse-btn" id="sidebarCollapseBtn" title="Toggle Sidebar">
@@ -65,11 +65,11 @@
 
         <a href="calendar.html" class="menu-item">
           <i class="fa-regular fa-calendar-days"></i>
-          <span class="menu-label">Calendar & Meetings</span>
+          <span class="menu-label">Calendar &amp; Meetings</span>
           <span class="menu-badge" style="background: rgba(37, 99, 235, 0.2); color: var(--primary);">Sync</span>
         </a>
 
-        <div class="menu-category">Organization & People</div>
+        <div class="menu-category">Organization &amp; People</div>
 
         <a href="directory.html" class="menu-item">
           <i class="fa-solid fa-users-viewfinder"></i>
@@ -120,7 +120,6 @@
             <i class="fa-solid fa-cloud-arrow-up"></i> Upload Doc
           </a>
 
-          <!-- Notifications Center Menu (Red dot visible ONLY when there is an unread alert) -->
           <div class="notification-menu-container">
             <button class="header-action-btn" id="notificationsBellBtn" title="Notifications">
               <i class="fa-regular fa-bell"></i>
@@ -134,9 +133,7 @@
                 </div>
                 <button class="mark-read-btn" id="markAllNotificationsReadBtn">Mark all as read</button>
               </div>
-              <div class="notifications-list" id="notificationsListContainer">
-                <!-- Dynamically populated by NotificationCenter in app.js -->
-              </div>
+              <div class="notifications-list" id="notificationsListContainer"></div>
             </div>
           </div>
 
@@ -169,61 +166,219 @@
               <i class="fa-solid fa-chevron-right" style="font-size: 0.6rem;"></i>
               <span>Settings</span>
             </div>
-            <h1 class="page-title">Settings & System Preferences</h1>
-            <p class="page-subtitle">Configure executive color theory palettes, audio chimes, meeting API webhooks, and account options.</p>
+            <h1 class="page-title">Settings &amp; Account Preferences</h1>
+            <p class="page-subtitle">All preferences sync automatically with your account and persist across reloads and logins.</p>
+          </div>
+          <div class="page-header-actions">
+            <span class="card-badge" id="settingsSyncStatus" style="background: rgba(16, 185, 129, 0.14); color: var(--success); padding: 0.4rem 0.75rem;">
+              <i class="fa-solid fa-cloud-check"></i> Synced to Account
+            </span>
+            <button class="btn btn-secondary" id="resetSettingsBtn">
+              <i class="fa-solid fa-rotate-left"></i> Reset Defaults
+            </button>
           </div>
         </div>
 
-        <div style="max-width: 780px;">
-          <!-- Color Theory Palette Configuration -->
-          <div class="card" style="margin-bottom: 1.5rem;">
-            <h3 style="font-size: 1.1rem; margin-bottom: 1rem;">Color Theory & Executive Palette</h3>
-            <div style="display: flex; align-items: center; gap: 1rem; margin-bottom: 1.5rem;">
-              <span style="font-size: 0.88rem; font-weight: 600;">Theme Accents:</span>
-              <div style="display: flex; gap: 0.6rem;">
-                <button class="accent-color-pill active" data-color="#2563eb" title="Cerulean Sapphire (Executive)" style="width: 28px; height: 28px; border-radius: 50%; background: #2563eb; border: 2px solid #fff;"></button>
-                <button class="accent-color-pill" data-color="#059669" title="Emerald Sage (Growth)" style="width: 28px; height: 28px; border-radius: 50%; background: #059669; border: 2px solid transparent;"></button>
-                <button class="accent-color-pill" data-color="#0d9488" title="Teal Horizon (Psychological Safety)" style="width: 28px; height: 28px; border-radius: 50%; background: #0d9488; border: 2px solid transparent;"></button>
-                <button class="accent-color-pill" data-color="#7c3aed" title="Imperial Violet" style="width: 28px; height: 28px; border-radius: 50%; background: #7c3aed; border: 2px solid transparent;"></button>
-                <button class="accent-color-pill" data-color="#d97706" title="Warm Amber Gold" style="width: 28px; height: 28px; border-radius: 50%; background: #d97706; border: 2px solid transparent;"></button>
+        <div class="settings-grid">
+          <!-- 1. Appearance & Theme -->
+          <div class="card">
+            <div class="card-header">
+              <div class="card-title-wrap">
+                <h3 class="card-title"><i class="fa-solid fa-palette" style="color: var(--primary);"></i> Appearance &amp; Theme</h3>
               </div>
             </div>
 
-            <div style="display: flex; align-items: center; justify-content: space-between; padding-top: 1rem; border-top: 1px solid var(--border-color);">
+            <div class="setting-row">
               <div>
-                <strong style="display: block; font-size: 0.9rem;">Interactive Audio Synthesizer</strong>
-                <span style="font-size: 0.78rem; color: var(--text-muted);">Play soft synthesized micro-chimes for clicks, poll voting, and confirmations.</span>
+                <strong>Color Mode</strong>
+                <span>Switch between Nocturnal Navy (Dark) and Crisp Ice (Light).</span>
               </div>
-              <input type="checkbox" id="settingsSoundToggle" checked style="width: 20px; height: 20px; cursor: pointer;" />
+              <div class="chart-type-pill-group">
+                <button type="button" class="chart-type-pill" data-theme-choice="dark"><i class="fa-solid fa-moon"></i> Dark</button>
+                <button type="button" class="chart-type-pill" data-theme-choice="light"><i class="fa-solid fa-sun"></i> Light</button>
+              </div>
+            </div>
+
+            <div class="setting-row" style="flex-direction: column; align-items: flex-start; gap: 0.75rem;">
+              <div>
+                <strong>Theme Accent Color</strong>
+                <span>Customize primary buttons, highlights, and chart accents.</span>
+              </div>
+              <div style="display: flex; gap: 0.65rem; flex-wrap: wrap;">
+                <button class="accent-color-pill" data-color="#60c1e5" title="Sky Aqua (Default)" style="width: 30px; height: 30px; border-radius: 50%; background: #60c1e5; border: 2px solid transparent;"></button>
+                <button class="accent-color-pill" data-color="#2563eb" title="Cerulean Sapphire" style="width: 30px; height: 30px; border-radius: 50%; background: #2563eb; border: 2px solid transparent;"></button>
+                <button class="accent-color-pill" data-color="#059669" title="Emerald Sage" style="width: 30px; height: 30px; border-radius: 50%; background: #059669; border: 2px solid transparent;"></button>
+                <button class="accent-color-pill" data-color="#0d9488" title="Teal Horizon" style="width: 30px; height: 30px; border-radius: 50%; background: #0d9488; border: 2px solid transparent;"></button>
+                <button class="accent-color-pill" data-color="#7c3aed" title="Imperial Violet" style="width: 30px; height: 30px; border-radius: 50%; background: #7c3aed; border: 2px solid transparent;"></button>
+                <button class="accent-color-pill" data-color="#d97706" title="Warm Amber Gold" style="width: 30px; height: 30px; border-radius: 50%; background: #d97706; border: 2px solid transparent;"></button>
+              </div>
+            </div>
+
+            <div class="setting-row">
+              <div>
+                <strong>Compact UI Density</strong>
+                <span>Tighter card padding and table spacing for high-density views.</span>
+              </div>
+              <input type="checkbox" id="settingsCompactToggle" class="setting-checkbox" />
+            </div>
+
+            <div class="setting-row">
+              <div>
+                <strong>Reduce Motion</strong>
+                <span>Minimize scroll-reveal and hover transition animations.</span>
+              </div>
+              <input type="checkbox" id="settingsReduceMotionToggle" class="setting-checkbox" />
             </div>
           </div>
 
-          <!-- Active User Profile Card -->
-          <div class="card" style="margin-bottom: 1.5rem;">
-            <h3 style="font-size: 1.1rem; margin-bottom: 1rem;">Active User Profile</h3>
-            <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 1rem;">
-              <div style="display: flex; align-items: center; gap: 0.85rem;">
-                <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=100&auto=format&fit=crop&q=80" alt="Avatar" class="user-avatar" style="width: 52px; height: 52px; border-radius: 50%; object-fit: cover;" />
-                <div>
-                  <h4 class="user-name" style="font-size: 1.05rem;">Alex Vance</h4>
-                  <span class="user-role" style="font-size: 0.82rem; color: var(--text-muted);">Head of People Ops</span>
-                </div>
+          <!-- 2. Productivity & Notifications -->
+          <div class="card">
+            <div class="card-header">
+              <div class="card-title-wrap">
+                <h3 class="card-title"><i class="fa-solid fa-bolt" style="color: var(--warning);"></i> Productivity &amp; Alerts</h3>
               </div>
-              <button class="btn btn-secondary logout-trigger-btn">
+            </div>
+
+            <div class="setting-row">
+              <div>
+                <strong>Interactive Audio Synthesizer</strong>
+                <span>Play soft synthesized micro-chimes for clicks and confirmations.</span>
+              </div>
+              <input type="checkbox" id="settingsSoundToggle" class="setting-checkbox" checked />
+            </div>
+
+            <div class="setting-row">
+              <div>
+                <strong>Toast Notifications</strong>
+                <span>Display live status popups for actions and alerts.</span>
+              </div>
+              <input type="checkbox" id="settingsToastToggle" class="setting-checkbox" checked />
+            </div>
+
+            <div class="setting-row">
+              <div>
+                <strong>Auto-Collapse Sidebar</strong>
+                <span>Start with a compact icon-only navigation rail on desktop.</span>
+              </div>
+              <input type="checkbox" id="settingsSidebarToggle" class="setting-checkbox" />
+            </div>
+
+            <div class="setting-row">
+              <div>
+                <strong>Weekly Engagement Digest</strong>
+                <span>Receive weekly summary of team eNPS and survey participation.</span>
+              </div>
+              <input type="checkbox" id="settingsDigestToggle" class="setting-checkbox" checked />
+            </div>
+
+            <div class="setting-row">
+              <div>
+                <strong>Default Workspace Page</strong>
+                <span>Preferred page when opening the portal.</span>
+              </div>
+              <select id="settingsDefaultPage" style="min-width: 170px;">
+                <option value="dashboard.html">Dashboard</option>
+                <option value="analytics.html">Document Analytics</option>
+                <option value="surveys.html">Reviews &amp; Surveys</option>
+                <option value="kudos.html">Team &amp; Social</option>
+                <option value="calendar.html">Calendar &amp; Meetings</option>
+              </select>
+            </div>
+          </div>
+
+          <!-- 3. My Profile & Availability -->
+          <div class="card">
+            <div class="card-header">
+              <div class="card-title-wrap">
+                <h3 class="card-title"><i class="fa-solid fa-id-card" style="color: var(--success);"></i> My Profile &amp; Availability</h3>
+              </div>
+              <button class="btn btn-sm btn-secondary logout-trigger-btn">
                 <i class="fa-solid fa-arrow-right-from-bracket"></i> Sign Out
               </button>
             </div>
+
+            <div style="display: flex; align-items: center; gap: 0.9rem; margin-bottom: 1.25rem; padding-bottom: 1rem; border-bottom: 1px solid var(--border-subtle);">
+              <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=100&auto=format&fit=crop&q=80" alt="Avatar" class="user-avatar" style="width: 52px; height: 52px; border-radius: 50%; object-fit: cover;" />
+              <div>
+                <h4 class="user-name" style="font-size: 1.05rem;">Alex Vance</h4>
+                <span class="user-role" style="font-size: 0.8rem; color: var(--text-muted);">Head of People Ops</span>
+              </div>
+            </div>
+
+            <form id="profileUpdateForm">
+              <div id="adminOnlyProfileFields" style="display: none; grid-template-columns: 1fr 1fr; gap: 0.85rem; margin-bottom: 0.85rem;">
+                <div>
+                  <label style="display: block; font-size: 0.78rem; font-weight: 600; margin-bottom: 0.3rem;">Display Name</label>
+                  <input type="text" id="profileNameInput" style="width: 100%;" />
+                </div>
+                <div>
+                  <label style="display: block; font-size: 0.78rem; font-weight: 600; margin-bottom: 0.3rem;">Job Title</label>
+                  <input type="text" id="profileTitleInput" style="width: 100%;" />
+                </div>
+                <div style="grid-column: 1 / -1;">
+                  <label style="display: block; font-size: 0.78rem; font-weight: 600; margin-bottom: 0.3rem;">Department</label>
+                  <input type="text" id="profileDeptInput" style="width: 100%;" />
+                </div>
+              </div>
+
+              <div id="employeeReadOnlyInfo" style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 0.65rem; margin-bottom: 1rem; padding: 0.75rem; background: var(--bg-subtle); border-radius: var(--radius-md); font-size: 0.78rem;">
+                <div>
+                  <span style="color: var(--text-muted); display: block; font-size: 0.7rem;">Name</span>
+                  <strong id="roProfileName">--</strong>
+                </div>
+                <div>
+                  <span style="color: var(--text-muted); display: block; font-size: 0.7rem;">Job Title</span>
+                  <strong id="roProfileTitle">--</strong>
+                </div>
+                <div>
+                  <span style="color: var(--text-muted); display: block; font-size: 0.7rem;">Department</span>
+                  <strong id="roProfileDept">--</strong>
+                </div>
+              </div>
+
+              <div style="margin-bottom: 1rem;">
+                <label style="display: block; font-size: 0.78rem; font-weight: 600; margin-bottom: 0.3rem;">Availability Status</label>
+                <select id="profileStatusInput" style="width: 100%;">
+                  <option value="Online">Online</option>
+                  <option value="Focus Mode">Focus Mode</option>
+                  <option value="In a Meeting">In a Meeting</option>
+                  <option value="Away">Away</option>
+                </select>
+                <span id="employeeProfileLockNote" style="display: block; font-size: 0.72rem; color: var(--text-muted); margin-top: 0.35rem;">
+                  <i class="fa-solid fa-lock"></i> Name, job title, and department are managed by your Administrator.
+                </span>
+              </div>
+
+              <button type="submit" class="btn btn-primary" style="width: 100%;">
+                <i class="fa-solid fa-floppy-disk"></i> Save Availability Status
+              </button>
+            </form>
           </div>
 
-          <!-- MERN Stack Transition Card -->
+          <!-- 4. Account Security & Password -->
           <div class="card">
-            <h3 style="font-size: 1.1rem; margin-bottom: 0.75rem;">MERN Stack Transition</h3>
-            <p style="font-size: 0.84rem; color: var(--text-secondary); line-height: 1.6; margin-bottom: 1rem;">
-              The application is segregated into dedicated, cleanly linked views. Each view (<code>dashboard.html</code>, <code>analytics.html</code>, <code>calendar.html</code>, etc.) maps directly to a React / Next.js component, and backend endpoints can plug seamlessly into MongoDB and Express REST APIs.
-            </p>
-            <div style="background: var(--bg-subtle); padding: 1rem; border-radius: var(--radius-md); font-size: 0.8rem; border-left: 3px solid var(--primary);">
-              <strong>Backend Ready:</strong> Pre-configured Python (<code>server.py</code>) and zero-dependency Node (<code>server.js</code>) HTTP servers are included in the repository.
+            <div class="card-header">
+              <div class="card-title-wrap">
+                <h3 class="card-title"><i class="fa-solid fa-lock" style="color: var(--danger);"></i> Security &amp; Password</h3>
+              </div>
             </div>
+            <form id="changePasswordForm">
+              <div style="margin-bottom: 0.85rem;">
+                <label style="display: block; font-size: 0.78rem; font-weight: 600; margin-bottom: 0.3rem;">Current Password</label>
+                <input type="password" id="currentPwInput" required placeholder="Enter current password" style="width: 100%;" />
+              </div>
+              <div style="margin-bottom: 0.85rem;">
+                <label style="display: block; font-size: 0.78rem; font-weight: 600; margin-bottom: 0.3rem;">New Password (min 6 characters)</label>
+                <input type="password" id="newPwInput" required minlength="6" placeholder="Enter new password" style="width: 100%;" />
+              </div>
+              <div style="margin-bottom: 1rem;">
+                <label style="display: block; font-size: 0.78rem; font-weight: 600; margin-bottom: 0.3rem;">Confirm New Password</label>
+                <input type="password" id="confirmPwInput" required minlength="6" placeholder="Re-enter new password" style="width: 100%;" />
+              </div>
+              <button type="submit" class="btn btn-secondary" style="width: 100%;">
+                <i class="fa-solid fa-key"></i> Update Account Password
+              </button>
+            </form>
           </div>
         </div>
 

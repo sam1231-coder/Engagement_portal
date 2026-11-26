@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Live Audit Log • Humanly Admin Console</title>
+
+  <!-- External Fonts & Icons -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Plus+Jakarta+Sans:wght@500;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+
+  <!-- Core App Stylesheets -->
+  <link rel="stylesheet" href="../css/humanly.css" />
+  <link rel="stylesheet" href="../css/components.css" />
+
+  <!-- Auth Guard (Restricts strictly to role === 'admin') -->
+  <script src="../js/auth-guard.js"></script>
+</head>
+<body>
+  <div class="app-container">
+
+    <!-- 1. Left Navigation Sidebar -->
+    <aside class="app-sidebar" id="appSidebar">
+      <div class="sidebar-brand">
+        <a href="admin-dashboard.html" class="brand-link">
+          <div class="brand-icon" style="background: var(--danger);"><i class="fa-solid fa-shield-halved"></i></div>
+          <div class="brand-title">
+            <span class="title-main">HUMANLY</span>
+            <span class="title-sub" style="color: var(--danger);">ADMIN CONSOLE</span>
+          </div>
+        </a>
+        <button class="sidebar-collapse-btn" id="sidebarCollapseBtn" title="Toggle Sidebar">
+          <i class="fa-solid fa-bars-staggered"></i>
+        </button>
+      </div>
+
+      <nav class="sidebar-menu">
+        <div class="menu-category" style="color: var(--danger); font-weight: 700;">Executive Admin</div>
+
+        <a href="admin-dashboard.html" class="menu-item">
+          <i class="fa-solid fa-sliders"></i>
+          <span class="menu-label">Executive Control</span>
+          <span class="menu-badge" style="background: var(--danger); color: #fff;">Admin</span>
+        </a>
+
+        <a href="admin-users.html" class="menu-item">
+          <i class="fa-solid fa-user-gear"></i>
+          <span class="menu-label">Workforce &amp; Roles</span>
+          <span class="menu-badge" id="sidebarUserCountBadge">Manage</span>
+        </a>
+
+        <a href="admin-audit.html" class="menu-item active">
+          <i class="fa-solid fa-wave-square"></i>
+          <span class="menu-label">Live Audit Log</span>
+          <span class="menu-badge badge-pulse">Live</span>
+        </a>
+
+        <div class="menu-category">Employee Experience</div>
+
+        <a href="dashboard.html" class="menu-item">
+          <i class="fa-solid fa-gauge-high"></i>
+          <span class="menu-label">Employee Portal</span>
+        </a>
+
+        <a href="analytics.html" class="menu-item">
+          <i class="fa-solid fa-chart-pie"></i>
+          <span class="menu-label">Document Analytics</span>
+          <span class="menu-badge badge-hot">Studio</span>
+        </a>
+
+        <a href="surveys.html" class="menu-item">
+          <i class="fa-solid fa-clipboard-question"></i>
+          <span class="menu-label">Review and survey</span>
+        </a>
+
+        <a href="kudos.html" class="menu-item">
+          <i class="fa-solid fa-award"></i>
+          <span class="menu-label">Team and social</span>
+        </a>
+
+        <a href="calendar.html" class="menu-item">
+          <i class="fa-regular fa-calendar-days"></i>
+          <span class="menu-label">Calendar &amp; Meetings</span>
+        </a>
+
+        <a href="directory.html" class="menu-item">
+          <i class="fa-solid fa-users"></i>
+          <span class="menu-label">Team Directory</span>
+        </a>
+
+        <a href="settings.html" class="menu-item">
+          <i class="fa-solid fa-sliders"></i>
+          <span class="menu-label">Settings</span>
+        </a>
+      </nav>
+
+      <div class="sidebar-footer">
+        <div class="sidebar-user-card" onclick="window.location.href='settings.html'">
+          <div class="user-avatar-wrap">
+            <img src="https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=120&auto=format&fit=crop&q=80" alt="Avatar" class="user-avatar" style="border-color: var(--danger);" />
+            <div class="user-status-dot"></div>
+          </div>
+          <div class="user-info">
+            <span class="user-name">Administrator</span>
+            <span class="user-role" style="color: var(--danger);">Enterprise Admin</span>
+          </div>
+        </div>
+      </div>
+    </aside>
+
+    <!-- 2. Main Content Area -->
+    <main class="app-main">
+      <header class="app-header">
+        <div class="header-left">
+          <button class="sidebar-toggle-btn d-md-none" id="mobileSidebarToggle" title="Open Menu">
+            <i class="fa-solid fa-bars"></i>
+          </button>
+          <div class="header-search">
+            <i class="fa-solid fa-magnifying-glass"></i>
+            <input type="text" placeholder="Filter by employee email, action, or details..." id="auditPageSearchInput" />
+            <span class="search-shortcut" data-open-palette style="cursor: pointer;">Ctrl + K</span>
+          </div>
+        </div>
+
+        <div class="header-right">
+          <div class="theme-switch-btn" id="themeSwitchBtn" title="Toggle Dark/Light Mode">
+            <div class="theme-switch-thumb"><i class="fa-solid fa-moon"></i></div>
+          </div>
+
+          <div class="notification-menu-container">
+            <button class="header-action-btn" id="notificationsBellBtn" title="Notifications">
+              <i class="fa-regular fa-bell"></i>
+              <span class="badge-dot" id="notificationDot"></span>
+            </button>
+            <div class="notifications-dropdown" id="notificationsDropdown">
+              <div class="notifications-dropdown-header">
+                <div style="display: flex; align-items: center; gap: 0.5rem;">
+                  <h4 style="margin: 0;">Admin Alerts</h4>
+                  <span class="card-badge" id="notificationsUnreadCountBadge" style="font-size: 0.68rem; padding: 0.1rem 0.4rem;">0 new</span>
+                </div>
+                <button class="mark-read-btn" id="markAllNotificationsReadBtn">Mark all as read</button>
+              </div>
+              <div class="notifications-list" id="notificationsListContainer"></div>
+            </div>
+          </div>
+
+          <div class="user-profile-menu-container">
+            <div class="user-avatar-wrap" id="headerProfileBtn" style="cursor: pointer;">
+              <img src="https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=120&auto=format&fit=crop&q=80" alt="User" class="user-avatar" style="width: 36px; height: 36px; border-radius: 50%; object-fit: cover; border: 2px solid var(--danger);" />
+            </div>
+
+            <div class="user-profile-dropdown" id="headerProfileDropdown">
+              <div class="dropdown-user-header">
+                <h4 class="user-name">Administrator</h4>
+                <span id="dropdownUserEmail">admin@humanly.io</span>
+              </div>
+              <a href="admin-dashboard.html" class="dropdown-item"><i class="fa-solid fa-shield-halved"></i> Admin Console</a>
+              <a href="admin-users.html" class="dropdown-item"><i class="fa-solid fa-user-gear"></i> Workforce &amp; Roles</a>
+              <a href="admin-audit.html" class="dropdown-item"><i class="fa-solid fa-wave-square"></i> Live Audit Log</a>
+              <a href="settings.html" class="dropdown-item"><i class="fa-solid fa-sliders"></i> System Settings</a>
+              <div class="dropdown-item text-danger logout-trigger-btn" style="border-top: 1px solid var(--border-color); margin-top: 0.25rem;">
+                <i class="fa-solid fa-arrow-right-from-bracket"></i> Sign Out
+              </div>
+            </div>
+          </div>
+        </div>
+      </header>
+
+      <div class="app-content">
+        <div class="page-header">
+          <div class="page-title-box">
+            <div class="page-breadcrumbs">
+              <a href="admin-dashboard.html">Humanly</a>
+              <i class="fa-solid fa-chevron-right" style="font-size: 0.6rem;"></i>
+              <a href="admin-dashboard.html">Admin Console</a>
+              <i class="fa-solid fa-chevron-right" style="font-size: 0.6rem;"></i>
+              <span>Live Audit Log</span>
+            </div>
+            <h1 class="page-title">Real-Time Employee Activity &amp; Audit Log</h1>
+            <p class="page-subtitle">Live stream of logins, page views, survey submissions, kudos, and admin actions.</p>
+          </div>
+
+          <div class="page-header-actions">
+            <button class="btn btn-secondary" id="toggleLiveStreamBtn">
+              <i class="fa-solid fa-circle-pause"></i> Pause Live (4s)
+            </button>
+            <button class="btn btn-secondary" id="exportFullAuditBtn">
+              <i class="fa-solid fa-file-csv"></i> Export CSV
+            </button>
+            <button class="btn btn-primary" id="manualRefreshAuditBtn">
+              <i class="fa-solid fa-rotate"></i> Refresh Now
+            </button>
+          </div>
+        </div>
+
+        <!-- Filter Bar -->
+        <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem; margin-bottom: 1.5rem; background: var(--bg-surface); padding: 0.85rem 1.25rem; border: 1px solid var(--border-color); border-radius: var(--radius-lg);">
+          <div style="display: flex; align-items: center; gap: 0.65rem; flex-wrap: wrap;">
+            <span style="font-size: 0.82rem; font-weight: 700; color: var(--text-secondary);"><i class="fa-solid fa-filter"></i> Event Type:</span>
+            <div class="chart-type-pill-group">
+              <button class="chart-type-pill active" data-audit-filter="all">All Events</button>
+              <button class="chart-type-pill" data-audit-filter="PAGE_VIEW">Page Views</button>
+              <button class="chart-type-pill" data-audit-filter="LOGIN">Logins</button>
+              <button class="chart-type-pill" data-audit-filter="USER">User / Role</button>
+              <button class="chart-type-pill" data-audit-filter="SURVEY">Surveys &amp; Kudos</button>
+            </div>
+          </div>
+
+          <div style="font-size: 0.8rem; color: var(--text-muted);">
+            <span id="auditLiveIndicator" style="color: var(--success); font-weight: 700;"><i class="fa-solid fa-circle" style="font-size: 0.55rem;"></i> Live</span> •
+            Showing <strong id="auditEventCount" style="color: var(--text-primary);">0</strong> events
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="data-table-wrapper">
+            <table class="custom-table" style="font-size: 0.84rem;">
+              <thead>
+                <tr>
+                  <th>Timestamp</th>
+                  <th>Event Action</th>
+                  <th>Employee / User</th>
+                  <th>Activity Details</th>
+                  <th>IP Address</th>
+                </tr>
+              </thead>
+              <tbody id="fullAuditTableBody">
+                <tr><td colspan="5" style="text-align: center; color: var(--text-muted); padding: 2rem;">Connecting to live audit stream...</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+      </div>
+    </main>
+  </div>
+
+  <!-- Command Palette Modal (Ctrl+K) -->
+  <div class="modal-overlay" id="commandPaletteModal">
+    <div class="command-palette">
+      <div class="palette-search-box">
+        <i class="fa-solid fa-magnifying-glass"></i>
+        <input type="text" id="commandPaletteInput" placeholder="Type a view, action, or command..." autocomplete="off" />
+        <span class="search-shortcut">ESC to close</span>
+      </div>
+      <div class="palette-results-list" id="paletteResults"></div>
+    </div>
+  </div>
+
+  <div class="toast-container" id="toastContainer"></div>
+
+  <script src="../js/app.js"></script>
+  <script src="../js/admin-audit.js"></script>
+</body>
+</html>

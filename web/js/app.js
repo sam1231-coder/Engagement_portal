@@ -7,36 +7,149 @@
 const App = (function () {
   let audioContext = null;
   let isSoundEnabled = true;
+  let isToastEnabled = true;
+
+  const DEFAULT_SETTINGS = {
+    theme: "dark",
+    accentColor: "",
+    soundEnabled: true,
+    toastEnabled: true,
+    compactDensity: false,
+    reduceMotion: false,
+    sidebarCollapsed: false,
+    weeklyDigest: true,
+    defaultPage: "dashboard.html"
+  };
+
+  function getUserSettingsKey() {
+    try {
+      const u = JSON.parse(localStorage.getItem("humanly_user") || "null");
+      if (u && u.id) return `humanly_settings_${u.id}`;
+    } catch (e) {}
+    return "humanly_settings_guest";
+  }
+
+  function loadLocalSettings() {
+    try {
+      const raw = localStorage.getItem(getUserSettingsKey());
+      if (raw) return { ...DEFAULT_SETTINGS, ...JSON.parse(raw) };
+    } catch (e) {}
+    return {
+      ...DEFAULT_SETTINGS,
+      theme: localStorage.getItem("humanly_theme") || localStorage.getItem("adminator_theme") || "dark"
+    };
+  }
+
+  let currentSettings = loadLocalSettings();
+
+  function applyAllSettings(s) {
+    currentSettings = { ...DEFAULT_SETTINGS, ...s };
+    isSoundEnabled = currentSettings.soundEnabled !== false;
+    isToastEnabled = currentSettings.toastEnabled !== false;
+
+    applyTheme(currentSettings.theme || "dark", false);
+
+    if (currentSettings.accentColor) {
+      document.documentElement.style.setProperty("--primary", currentSettings.accentColor);
+    } else {
+      document.documentElement.style.removeProperty("--primary");
+    }
+
+    document.documentElement.setAttribute("data-density", currentSettings.compactDensity ? "compact" : "comfortable");
+    document.documentElement.setAttribute("data-motion", currentSettings.reduceMotion ? "reduced" : "normal");
+
+    const sidebar = document.getElementById("appSidebar");
+    if (sidebar) {
+      if (currentSettings.sidebarCollapsed) {
+        sidebar.classList.add("collapsed");
+      } else {
+        sidebar.classList.remove("collapsed");
+      }
+    }
+  }
+
+  async function saveSettings(partial) {
+    currentSettings = { ...currentSettings, ...partial };
+    localStorage.setItem(getUserSettingsKey(), JSON.stringify(currentSettings));
+    applyAllSettings(currentSettings);
+
+    const token = localStorage.getItem("humanly_token");
+    if (token) {
+      try {
+        const res = await fetch("/api/settings", {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${token}`
+          },
+          body: JSON.stringify({ settings: currentSettings })
+        });
+        const badge = document.getElementById("settingsSyncStatus");
+        if (res.ok && badge) {
+          badge.innerHTML = '<i class="fa-solid fa-cloud-check"></i> Synced to Account';
+        }
+      } catch (e) {
+        // Offline / static fallback already saved to per-user localStorage
+      }
+    }
+  }
+
+  async function syncSettingsFromServer() {
+    const token = localStorage.getItem("humanly_token");
+    if (!token) return;
+    try {
+      const res = await fetch("/api/settings", {
+        headers: { "Authorization": `Bearer ${token}` }
+      });
+      if (!res.ok) return;
+      const data = await res.json();
+      if (data.success && data.settings && Object.keys(data.settings).length > 0) {
+        localStorage.setItem(getUserSettingsKey(), JSON.stringify({ ...DEFAULT_SETTINGS, ...data.settings }));
+        applyAllSettings(data.settings);
+        syncSettingsUI();
+      }
+    } catch (e) {}
+  }
 
   function init() {
+    applyAllSettings(currentSettings);
     initTheme();
     initSidebar();
     initHeaderProfileDropdown();
     initCommandPalette();
     initSettingsControls();
-    NotificationCenter.init();
+
+    const page = window.location.pathname.split("/").pop() || "";
+    const isAuthPage = page === "login.html" || page === "register.html";
+    if (!isAuthPage) {
+      initScrollUX();
+      NotificationCenter.init();
+      syncSettingsFromServer();
+    }
   }
 
   // 1. Theme Management (Dark / Light Mode)
   function initTheme() {
-    const savedTheme = localStorage.getItem("humanly_theme") || localStorage.getItem("adminator_theme") || "dark";
-    applyTheme(savedTheme);
-
     const themeToggleBtn = document.getElementById("themeSwitchBtn");
     if (themeToggleBtn) {
       themeToggleBtn.addEventListener("click", () => {
         const current = document.documentElement.getAttribute("data-theme") || "dark";
         const next = current === "dark" ? "light" : "dark";
-        applyTheme(next);
+        saveSettings({ theme: next });
+        syncSettingsUI();
         playSound("click");
       });
     }
   }
 
-  function applyTheme(theme) {
+  function applyTheme(theme, persist = true) {
     document.documentElement.setAttribute("data-theme", theme);
     localStorage.setItem("humanly_theme", theme);
     localStorage.setItem("adminator_theme", theme);
+    if (persist) {
+      currentSettings.theme = theme;
+      localStorage.setItem(getUserSettingsKey(), JSON.stringify(currentSettings));
+    }
 
     if (typeof Dashboard !== "undefined" && Dashboard.refresh) {
       Dashboard.refresh();
@@ -60,7 +173,10 @@ const App = (function () {
     if (collapseBtn && sidebar) {
       collapseBtn.addEventListener("click", () => {
         sidebar.classList.toggle("collapsed");
-        localStorage.setItem("adminator_sidebar_collapsed", sidebar.classList.contains("collapsed"));
+        const collapsed = sidebar.classList.contains("collapsed");
+        localStorage.setItem("adminator_sidebar_collapsed", collapsed);
+        saveSettings({ sidebarCollapsed: collapsed });
+        syncSettingsUI();
         playSound("click");
       });
     }
@@ -145,6 +261,7 @@ const App = (function () {
   const paletteCommands = [
     { title: "Admin Console & Executive Control", category: "Admin", icon: "fa-shield-halved", action: () => (window.location.href = "admin-dashboard.html") },
     { title: "Workforce & Role Management", category: "Admin", icon: "fa-user-gear", action: () => (window.location.href = "admin-users.html") },
+    { title: "Real-Time Employee Audit Log", category: "Admin", icon: "fa-wave-square", action: () => (window.location.href = "admin-audit.html") },
     { title: "Dashboard Overview", category: "Navigation", icon: "fa-gauge", action: () => (window.location.href = "dashboard.html") },
     { title: "Document Analytics Studio", category: "Navigation", icon: "fa-chart-pie", action: () => (window.location.href = "analytics.html") },
     { title: "Review and survey", category: "Navigation", icon: "fa-clipboard-question", action: () => (window.location.href = "surveys.html") },
@@ -251,6 +368,7 @@ const App = (function () {
 
   // 6. Toast Notifications
   function showToast(title, message, type = "info") {
+    if (!isToastEnabled && type !== "danger") return;
     let container = document.getElementById("toastContainer");
     if (!container) {
       container = document.createElement("div");
@@ -285,26 +403,245 @@ const App = (function () {
     }, 3800);
   }
 
+  function syncSettingsUI() {
+    const soundToggle = document.getElementById("settingsSoundToggle");
+    if (soundToggle) soundToggle.checked = currentSettings.soundEnabled !== false;
+
+    const toastToggle = document.getElementById("settingsToastToggle");
+    if (toastToggle) toastToggle.checked = currentSettings.toastEnabled !== false;
+
+    const compactToggle = document.getElementById("settingsCompactToggle");
+    if (compactToggle) compactToggle.checked = !!currentSettings.compactDensity;
+
+    const motionToggle = document.getElementById("settingsReduceMotionToggle");
+    if (motionToggle) motionToggle.checked = !!currentSettings.reduceMotion;
+
+    const sidebarToggle = document.getElementById("settingsSidebarToggle");
+    if (sidebarToggle) sidebarToggle.checked = !!currentSettings.sidebarCollapsed;
+
+    const digestToggle = document.getElementById("settingsDigestToggle");
+    if (digestToggle) digestToggle.checked = currentSettings.weeklyDigest !== false;
+
+    const defaultPageSel = document.getElementById("settingsDefaultPage");
+    if (defaultPageSel && currentSettings.defaultPage) defaultPageSel.value = currentSettings.defaultPage;
+
+    document.querySelectorAll("[data-theme-choice]").forEach((btn) => {
+      btn.classList.toggle("active", btn.getAttribute("data-theme-choice") === currentSettings.theme);
+    });
+
+    document.querySelectorAll(".accent-color-pill").forEach((pill) => {
+      const isActive = pill.getAttribute("data-color") === currentSettings.accentColor;
+      pill.classList.toggle("active", isActive);
+      pill.style.borderColor = isActive ? "var(--text-primary)" : "transparent";
+    });
+  }
+
   // 7. Settings Controls
   function initSettingsControls() {
-    const soundToggle = document.getElementById("settingsSoundToggle");
-    if (soundToggle) {
-      soundToggle.addEventListener("change", (e) => {
-        isSoundEnabled = e.target.checked;
-        showToast("Audio Setting", isSoundEnabled ? "Interactive sound enabled" : "Interactive sound muted", "info");
+    syncSettingsUI();
+
+    document.querySelectorAll("[data-theme-choice]").forEach((btn) => {
+      btn.addEventListener("click", () => {
+        const chosen = btn.getAttribute("data-theme-choice");
+        saveSettings({ theme: chosen });
+        syncSettingsUI();
+        playSound("click");
+        showToast("Theme Updated", `Switched to ${chosen} mode`, "success");
       });
-    }
+    });
+
+    document.getElementById("settingsSoundToggle")?.addEventListener("change", (e) => {
+      saveSettings({ soundEnabled: e.target.checked });
+      showToast("Audio Setting", e.target.checked ? "Interactive sound enabled" : "Interactive sound muted", "info");
+    });
+
+    document.getElementById("settingsToastToggle")?.addEventListener("change", (e) => {
+      saveSettings({ toastEnabled: e.target.checked });
+      if (e.target.checked) showToast("Notifications", "Toast alerts enabled", "info");
+    });
+
+    document.getElementById("settingsCompactToggle")?.addEventListener("change", (e) => {
+      saveSettings({ compactDensity: e.target.checked });
+      playSound("click");
+      showToast("Layout Density", e.target.checked ? "Compact mode enabled" : "Comfortable mode enabled", "success");
+    });
+
+    document.getElementById("settingsReduceMotionToggle")?.addEventListener("change", (e) => {
+      saveSettings({ reduceMotion: e.target.checked });
+      showToast("Motion Preference", e.target.checked ? "Reduced motion enabled" : "Animations enabled", "info");
+    });
+
+    document.getElementById("settingsSidebarToggle")?.addEventListener("change", (e) => {
+      saveSettings({ sidebarCollapsed: e.target.checked });
+      playSound("click");
+      showToast("Sidebar", e.target.checked ? "Sidebar auto-collapse enabled" : "Sidebar expanded", "info");
+    });
+
+    document.getElementById("settingsDigestToggle")?.addEventListener("change", (e) => {
+      saveSettings({ weeklyDigest: e.target.checked });
+      showToast("Digest Saved", e.target.checked ? "Weekly engagement digest enabled" : "Weekly digest paused", "info");
+    });
+
+    document.getElementById("settingsDefaultPage")?.addEventListener("change", (e) => {
+      saveSettings({ defaultPage: e.target.value });
+      showToast("Landing Page Saved", "Default workspace updated", "success");
+    });
 
     const colorPills = document.querySelectorAll(".accent-color-pill");
     colorPills.forEach((pill) => {
       pill.addEventListener("click", () => {
         const primaryColor = pill.getAttribute("data-color");
-        document.documentElement.style.setProperty("--primary", primaryColor);
-        colorPills.forEach((p) => p.classList.remove("active"));
-        pill.classList.add("active");
-        showToast("Theme Updated", `Applied executive palette accent`, "success");
+        saveSettings({ accentColor: primaryColor });
+        syncSettingsUI();
+        playSound("click");
+        showToast("Theme Updated", "Accent color saved to your account", "success");
       });
     });
+
+    document.getElementById("resetSettingsBtn")?.addEventListener("click", () => {
+      saveSettings({ ...DEFAULT_SETTINGS });
+      syncSettingsUI();
+      playSound("pop");
+      showToast("Settings Reset", "Restored default preferences", "info");
+    });
+
+    // Populate & handle Profile Update Form on settings.html
+    const profileForm = document.getElementById("profileUpdateForm");
+    if (profileForm) {
+      let currentU = null;
+      try {
+        currentU = JSON.parse(localStorage.getItem("humanly_user") || "null");
+      } catch (e) {}
+
+      const isAdminUser = currentU && currentU.role === "admin";
+      const adminFields = document.getElementById("adminOnlyProfileFields");
+      const roInfo = document.getElementById("employeeReadOnlyInfo");
+      const lockNote = document.getElementById("employeeProfileLockNote");
+
+      if (currentU) {
+        if (isAdminUser) {
+          if (adminFields) adminFields.style.display = "grid";
+          if (roInfo) roInfo.style.display = "none";
+          if (lockNote) lockNote.style.display = "none";
+          document.getElementById("profileNameInput").value = currentU.name || "";
+          document.getElementById("profileTitleInput").value = currentU.title || "";
+          document.getElementById("profileDeptInput").value = currentU.department || "";
+        } else {
+          if (adminFields) adminFields.style.display = "none";
+          if (roInfo) roInfo.style.display = "grid";
+          if (lockNote) lockNote.style.display = "block";
+          const roName = document.getElementById("roProfileName");
+          const roTitle = document.getElementById("roProfileTitle");
+          const roDept = document.getElementById("roProfileDept");
+          if (roName) roName.textContent = currentU.name || "--";
+          if (roTitle) roTitle.textContent = currentU.title || "--";
+          if (roDept) roDept.textContent = currentU.department || "--";
+        }
+        document.getElementById("profileStatusInput").value = currentU.status || "Online";
+      }
+
+      profileForm.addEventListener("submit", async (e) => {
+        e.preventDefault();
+        const payload = isAdminUser
+          ? {
+              name: document.getElementById("profileNameInput").value.trim(),
+              title: document.getElementById("profileTitleInput").value.trim(),
+              department: document.getElementById("profileDeptInput").value.trim(),
+              status: document.getElementById("profileStatusInput").value
+            }
+          : {
+              status: document.getElementById("profileStatusInput").value
+            };
+
+        try {
+          const res = await fetch("/api/auth/profile", {
+            method: "PUT",
+            headers: {
+              "Content-Type": "application/json",
+              "Authorization": `Bearer ${localStorage.getItem("humanly_token")}`
+            },
+            body: JSON.stringify(payload)
+          });
+          const data = await res.json();
+          if (!res.ok || !data.success) throw new Error(data.message);
+          localStorage.setItem("humanly_user", JSON.stringify(data.user));
+          document.querySelectorAll(".user-name").forEach(el => (el.textContent = data.user.name));
+          document.querySelectorAll(".user-role").forEach(el => (el.textContent = data.user.title));
+          playSound("success");
+          showToast("Status Saved", isAdminUser ? "Your profile has been updated" : `Availability status updated to ${data.user.status}`, "success");
+        } catch (err) {
+          showToast("Error", err.message || "Could not update profile", "danger");
+        }
+      });
+    }
+
+    // Handle Change Password Form on settings.html
+    document.getElementById("changePasswordForm")?.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const currentPassword = document.getElementById("currentPwInput").value;
+      const newPassword = document.getElementById("newPwInput").value;
+      const confirmPw = document.getElementById("confirmPwInput").value;
+
+      if (newPassword !== confirmPw) {
+        showToast("Mismatch", "New passwords do not match", "danger");
+        return;
+      }
+
+      try {
+        const res = await fetch("/api/auth/password", {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${localStorage.getItem("humanly_token")}`
+          },
+          body: JSON.stringify({ currentPassword, newPassword })
+        });
+        const data = await res.json();
+        if (!res.ok || !data.success) throw new Error(data.message);
+        e.target.reset();
+        playSound("success");
+        showToast("Password Changed", "Your new password is active", "success");
+      } catch (err) {
+        showToast("Password Error", err.message || "Failed to update password", "danger");
+      }
+    });
+  }
+
+  // 7b. Scroll & Navigation UX (Reveal cards + Scroll-to-Top button)
+  function initScrollUX() {
+    if (document.querySelector(".app-main")) {
+      const scrollBtn = document.createElement("button");
+      scrollBtn.className = "scroll-top-btn";
+      scrollBtn.title = "Scroll to top";
+      scrollBtn.innerHTML = '<i class="fa-solid fa-arrow-up"></i>';
+      document.body.appendChild(scrollBtn);
+
+      window.addEventListener("scroll", () => {
+        scrollBtn.classList.toggle("visible", window.scrollY > 260);
+      }, { passive: true });
+
+      scrollBtn.addEventListener("click", () => {
+        window.scrollTo({ top: 0, behavior: "smooth" });
+        playSound("click");
+      });
+    }
+
+    if ("IntersectionObserver" in window) {
+      const cards = document.querySelectorAll(".app-content .card");
+      const observer = new IntersectionObserver((entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add("reveal-in");
+            observer.unobserve(entry.target);
+          }
+        });
+      }, { threshold: 0.06 });
+
+      cards.forEach((c, idx) => {
+        c.style.transitionDelay = `${Math.min(idx * 35, 180)}ms`;
+        observer.observe(c);
+      });
+    }
   }
 
   // 8. Notification Center Management (Red dot appears ONLY when there are unread notifications)
@@ -436,6 +773,93 @@ const App = (function () {
       showToast(title, message, type);
     }
 
+    function showBroadcastPopup(ann) {
+      const existing = document.querySelector(`.broadcast-popup-banner[data-ann-id="${ann.id}"]`);
+      if (existing) return;
+
+      const prioColor = ann.priority === "critical" ? "var(--danger)" : ann.priority === "urgent" ? "var(--warning)" : "var(--primary)";
+      const popup = document.createElement("div");
+      popup.className = "broadcast-popup-banner";
+      popup.setAttribute("data-ann-id", ann.id);
+      popup.style.borderLeft = `4px solid ${prioColor}`;
+      popup.innerHTML = `
+        <div style="display: flex; align-items: flex-start; justify-content: space-between; gap: 0.75rem;">
+          <div style="display: flex; align-items: center; gap: 0.5rem;">
+            <i class="fa-solid fa-bullhorn" style="color: ${prioColor};"></i>
+            <strong style="font-size: 0.88rem; color: var(--text-primary);">${ann.title}</strong>
+            <span class="card-badge" style="font-size: 0.62rem; text-transform: uppercase;">${ann.priority || "notice"}</span>
+          </div>
+          <button type="button" class="broadcast-close-btn" title="Dismiss" style="color: var(--text-muted); font-size: 0.9rem;"><i class="fa-solid fa-xmark"></i></button>
+        </div>
+        <p style="font-size: 0.8rem; color: var(--text-secondary); margin: 0.45rem 0; line-height: 1.45;">${ann.message}</p>
+        <div style="font-size: 0.7rem; color: var(--text-muted); display: flex; justify-content: space-between; align-items: center;">
+          <span>From ${ann.author_name || "Admin"}</span>
+          <span>${ann.created_at || "Just now"}</span>
+        </div>
+      `;
+
+      popup.querySelector(".broadcast-close-btn")?.addEventListener("click", () => {
+        popup.classList.remove("show");
+        setTimeout(() => popup.remove(), 250);
+      });
+
+      document.body.appendChild(popup);
+      requestAnimationFrame(() => popup.classList.add("show"));
+      playSound("pop");
+
+      setTimeout(() => {
+        if (popup.parentNode) {
+          popup.classList.remove("show");
+          setTimeout(() => popup.remove(), 250);
+        }
+      }, 12000);
+    }
+
+    async function pollBroadcastAnnouncements() {
+      const token = localStorage.getItem("humanly_token");
+      if (!token) return;
+      let uid = "guest";
+      try {
+        const u = JSON.parse(localStorage.getItem("humanly_user") || "null");
+        if (u && u.id) uid = u.id;
+      } catch (e) {}
+
+      const seenKey = `humanly_seen_ann_${uid}`;
+      let seenIds = [];
+      try {
+        seenIds = JSON.parse(localStorage.getItem(seenKey) || "[]");
+      } catch (e) { seenIds = []; }
+
+      try {
+        const res = await fetch("/api/announcements");
+        if (!res.ok) return;
+        const data = await res.json();
+        const anns = data.announcements || [];
+        if (!anns.length) return;
+
+        const unseen = anns.filter(a => !seenIds.includes(a.id));
+        if (unseen.length > 0) {
+          const notifs = getNotifications();
+          unseen.slice().reverse().forEach(ann => {
+            notifs.unshift({
+              id: `ann-${ann.id}`,
+              title: `Broadcast: ${ann.title}`,
+              message: ann.message,
+              time: ann.created_at || "Just now",
+              type: "system",
+              icon: "fa-solid fa-bullhorn",
+              read: false,
+              url: "#"
+            });
+            seenIds.push(ann.id);
+            showBroadcastPopup(ann);
+          });
+          localStorage.setItem(seenKey, JSON.stringify(seenIds.slice(-50)));
+          saveNotifications(notifs.slice(0, 30));
+        }
+      } catch (e) {}
+    }
+
     function init() {
       const bellBtn = document.getElementById("notificationsBellBtn");
       const dropdown = document.getElementById("notificationsDropdown");
@@ -464,6 +888,8 @@ const App = (function () {
       }
 
       updateUI();
+      pollBroadcastAnnouncements();
+      setInterval(pollBroadcastAnnouncements, 6000);
     }
 
     return {

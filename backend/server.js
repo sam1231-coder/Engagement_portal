@@ -120,11 +120,14 @@ const server = http.createServer(async (req, res) => {
           status: user.status
         };
 
+        const userSettings = db.getUserSettings(user.id) || {};
+
         return sendJSON(res, 200, {
           success: true,
           token: session.token,
           expiresAt: session.expiresAt,
-          user: safeUser
+          user: safeUser,
+          settings: userSettings
         });
       }
 
@@ -169,13 +172,86 @@ const server = http.createServer(async (req, res) => {
         return sendJSON(res, 200, { success: true, user });
       }
 
+      // 3b. Auth: Update Own Profile (Employees can only update Status; Admins can also update Name/Title/Dept)
+      if (pathname === '/api/auth/profile' && req.method === 'PUT') {
+        const authUser = getAuthUser(req);
+        if (!authUser) {
+          return sendJSON(res, 401, { success: false, message: 'Unauthorized session' });
+        }
+        const data = await parseJSONBody(req);
+        const isAdmin = authUser.role === 'admin';
+        const updated = db.updateUser(authUser.id, {
+          name: isAdmin && data.name ? data.name.trim() : authUser.name,
+          title: isAdmin && data.title ? data.title.trim() : authUser.title,
+          department: isAdmin && data.department ? data.department.trim() : authUser.department,
+          status: data.status || authUser.status
+        });
+        db.logAudit(authUser.id, authUser.email, 'PROFILE_UPDATED', `${updated.name} updated availability status to ${updated.status}`, clientIp);
+        return sendJSON(res, 200, { success: true, user: updated });
+      }
+
+      // 3c. Auth: Change Own Password
+      if (pathname === '/api/auth/password' && req.method === 'PUT') {
+        const authUser = getAuthUser(req);
+        if (!authUser) {
+          return sendJSON(res, 401, { success: false, message: 'Unauthorized session' });
+        }
+        const { currentPassword, newPassword } = await parseJSONBody(req);
+        if (!currentPassword || !newPassword || newPassword.length < 6) {
+          return sendJSON(res, 400, { success: false, message: 'Current password and a new password (min 6 chars) are required.' });
+        }
+        const fullUser = db.findUserByEmail(authUser.email);
+        if (!fullUser || !db.verifyPassword(currentPassword, fullUser.password_hash, fullUser.salt)) {
+          return sendJSON(res, 401, { success: false, message: 'Current password is incorrect.' });
+        }
+        db.updateUserPassword(authUser.id, newPassword);
+        db.logAudit(authUser.id, authUser.email, 'PASSWORD_CHANGED', 'User changed account password', clientIp);
+        return sendJSON(res, 200, { success: true, message: 'Password updated successfully.' });
+      }
+
+      // 3d. User Settings (Persistent across reloads & relogins)
+      if (pathname === '/api/settings' && req.method === 'GET') {
+        const authUser = getAuthUser(req);
+        if (!authUser) {
+          return sendJSON(res, 401, { success: false, message: 'Unauthorized session' });
+        }
+        const settings = db.getUserSettings(authUser.id) || {};
+        return sendJSON(res, 200, { success: true, settings });
+      }
+
+      if (pathname === '/api/settings' && req.method === 'PUT') {
+        const authUser = getAuthUser(req);
+        if (!authUser) {
+          return sendJSON(res, 401, { success: false, message: 'Unauthorized session' });
+        }
+        const { settings } = await parseJSONBody(req);
+        const saved = db.saveUserSettings(authUser.id, settings || {});
+        return sendJSON(res, 200, { success: true, settings: saved });
+      }
+
       // 4. Auth: Logout
       if (pathname === '/api/auth/logout' && req.method === 'POST') {
         const authHeader = req.headers['authorization'];
         if (authHeader && authHeader.startsWith('Bearer ')) {
-          db.deleteSession(authHeader.substring(7));
+          const token = authHeader.substring(7);
+          const u = db.validateSession(token);
+          if (u) {
+            db.logAudit(u.id, u.email, 'USER_LOGOUT', `User signed out (${u.role})`, clientIp);
+          }
+          db.deleteSession(token);
         }
         return sendJSON(res, 200, { success: true, message: 'Session logged out' });
+      }
+
+      // 4b. Real-time Employee Activity Audit Tracking
+      if (pathname === '/api/audit/activity' && req.method === 'POST') {
+        const authUser = getAuthUser(req);
+        if (!authUser) {
+          return sendJSON(res, 401, { success: false, message: 'Unauthorized session' });
+        }
+        const { action = 'PAGE_VIEW', details = '' } = await parseJSONBody(req);
+        db.logAudit(authUser.id, authUser.email, String(action).slice(0, 60), String(details).slice(0, 300), clientIp);
+        return sendJSON(res, 201, { success: true });
       }
 
       // 5. Users List
@@ -195,10 +271,75 @@ const server = http.createServer(async (req, res) => {
         if (!data.name || !data.email || !data.password) {
           return sendJSON(res, 400, { success: false, message: 'Name, email, and password required' });
         }
+        if (data.password.length < 6) {
+          return sendJSON(res, 400, { success: false, message: 'Password must be at least 6 characters' });
+        }
 
-        const newUser = db.createUser(data);
+        const existing = db.findUserByEmail(data.email.trim());
+        if (existing) {
+          return sendJSON(res, 409, { success: false, message: 'A user with this email already exists' });
+        }
+
+        const newUser = db.createUser({
+          name: data.name.trim(),
+          email: data.email.trim(),
+          password: data.password,
+          role: ['admin', 'employee', 'hr_manager'].includes(data.role) ? data.role : 'employee',
+          department: (data.department || 'General').trim(),
+          title: (data.title || 'Team Member').trim(),
+          avatar: data.avatar || ''
+        });
         db.logAudit(authUser.id, authUser.email, 'USER_CREATED_BY_ADMIN', `Admin created user ${newUser.email} with role ${newUser.role}`, clientIp);
         return sendJSON(res, 201, { success: true, user: newUser });
+      }
+
+      // 6b. Admin: Update User Details
+      if (pathname.match(/^\/api\/users\/\d+$/) && req.method === 'PUT') {
+        const authUser = getAuthUser(req);
+        if (!authUser || authUser.role !== 'admin') {
+          return sendJSON(res, 403, { success: false, message: 'Admin privileges required' });
+        }
+
+        const targetId = parseInt(pathname.split('/')[3], 10);
+        const target = db.findUserById(targetId);
+        if (!target) {
+          return sendJSON(res, 404, { success: false, message: 'User not found' });
+        }
+
+        const data = await parseJSONBody(req);
+        const updated = db.updateUser(targetId, {
+          name: data.name ? data.name.trim() : undefined,
+          department: data.department ? data.department.trim() : undefined,
+          title: data.title ? data.title.trim() : undefined,
+          role: ['admin', 'employee', 'hr_manager'].includes(data.role) ? data.role : undefined,
+          status: data.status ? data.status.trim() : undefined,
+          retention_risk: data.retention_risk !== undefined ? Number(data.retention_risk) : undefined
+        });
+        db.logAudit(authUser.id, authUser.email, 'USER_UPDATED', `Admin updated user ${updated.email} (ID ${targetId})`, clientIp);
+        return sendJSON(res, 200, { success: true, user: updated });
+      }
+
+      // 6c. Admin: Reset / Give User Password
+      if (pathname.match(/^\/api\/users\/\d+\/password$/) && req.method === 'PUT') {
+        const authUser = getAuthUser(req);
+        if (!authUser || authUser.role !== 'admin') {
+          return sendJSON(res, 403, { success: false, message: 'Admin privileges required' });
+        }
+
+        const targetId = parseInt(pathname.split('/')[3], 10);
+        const target = db.findUserById(targetId);
+        if (!target) {
+          return sendJSON(res, 404, { success: false, message: 'User not found' });
+        }
+
+        const { password } = await parseJSONBody(req);
+        if (!password || password.length < 6) {
+          return sendJSON(res, 400, { success: false, message: 'New password must be at least 6 characters' });
+        }
+
+        db.updateUserPassword(targetId, password);
+        db.logAudit(authUser.id, authUser.email, 'ADMIN_PASSWORD_RESET', `Admin set new password for ${target.email}`, clientIp);
+        return sendJSON(res, 200, { success: true, message: `Password updated for ${target.name}` });
       }
 
       // 7. Admin: Update User Role
@@ -227,6 +368,9 @@ const server = http.createServer(async (req, res) => {
         }
 
         const targetId = parseInt(pathname.split('/')[3], 10);
+        if (targetId === authUser.id) {
+          return sendJSON(res, 400, { success: false, message: 'Cannot delete your own active admin account' });
+        }
         db.deleteUser(targetId);
         db.logAudit(authUser.id, authUser.email, 'USER_DELETED', `Deleted user ID ${targetId}`, clientIp);
         return sendJSON(res, 200, { success: true, message: 'User deleted' });
@@ -255,7 +399,36 @@ const server = http.createServer(async (req, res) => {
         const authUser = getAuthUser(req);
         const { rating, balanceScore, comments } = await parseJSONBody(req);
         db.saveSurveyResponse(surveyId, authUser ? authUser.id : null, rating || 5, balanceScore || 8, comments || '');
+        if (authUser) {
+          db.logAudit(authUser.id, authUser.email, 'SURVEY_RESPONSE', `Submitted response to survey #${surveyId} (rating ${rating || 5}/5)`, clientIp);
+        }
         return sendJSON(res, 200, { success: true, message: 'Response recorded in database' });
+      }
+
+      if (pathname.match(/^\/api\/surveys\/\d+$/) && req.method === 'PUT') {
+        const authUser = getAuthUser(req);
+        if (!authUser || authUser.role !== 'admin') {
+          return sendJSON(res, 403, { success: false, message: 'Admin privileges required' });
+        }
+        const surveyId = parseInt(pathname.split('/')[3], 10);
+        const { status } = await parseJSONBody(req);
+        if (!['Active', 'Closed', 'Draft'].includes(status)) {
+          return sendJSON(res, 400, { success: false, message: 'Invalid survey status' });
+        }
+        const updated = db.updateSurveyStatus(surveyId, status);
+        db.logAudit(authUser.id, authUser.email, 'SURVEY_UPDATED', `Updated survey ${surveyId} status to ${status}`, clientIp);
+        return sendJSON(res, 200, { success: true, survey: updated });
+      }
+
+      if (pathname.match(/^\/api\/surveys\/\d+$/) && req.method === 'DELETE') {
+        const authUser = getAuthUser(req);
+        if (!authUser || authUser.role !== 'admin') {
+          return sendJSON(res, 403, { success: false, message: 'Admin privileges required' });
+        }
+        const surveyId = parseInt(pathname.split('/')[3], 10);
+        db.deleteSurvey(surveyId);
+        db.logAudit(authUser.id, authUser.email, 'SURVEY_DELETED', `Deleted survey ID ${surveyId}`, clientIp);
+        return sendJSON(res, 200, { success: true, message: 'Survey deleted' });
       }
 
       // 10. Kudos Feed
@@ -278,6 +451,9 @@ const server = http.createServer(async (req, res) => {
           core_value: kudoData.core_value || '#Teamwork',
           message: kudoData.message
         });
+        if (authUser) {
+          db.logAudit(authUser.id, authUser.email, 'KUDOS_SENT', `Sent ${kudoData.badge || 'Kudos'} to ${kudoData.recipient_name}`, clientIp);
+        }
         return sendJSON(res, 201, { success: true, kudo: newKudo });
       }
 
@@ -331,6 +507,17 @@ const server = http.createServer(async (req, res) => {
       if (pathname === '/api/announcements' && req.method === 'GET') {
         const announcements = db.listAnnouncements();
         return sendJSON(res, 200, { success: true, announcements });
+      }
+
+      if (pathname.match(/^\/api\/announcements\/\d+$/) && req.method === 'DELETE') {
+        const authUser = getAuthUser(req);
+        if (!authUser || authUser.role !== 'admin') {
+          return sendJSON(res, 403, { success: false, message: 'Admin privileges required' });
+        }
+        const annId = parseInt(pathname.split('/')[3], 10);
+        db.deleteAnnouncement(annId);
+        db.logAudit(authUser.id, authUser.email, 'ANNOUNCEMENT_DELETED', `Deleted announcement ID ${annId}`, clientIp);
+        return sendJSON(res, 200, { success: true, message: 'Announcement removed' });
       }
 
       return sendJSON(res, 404, { success: false, message: 'API route not found' });

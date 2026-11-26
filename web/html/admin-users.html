@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Workforce & Roles • Humanly Admin Console</title>
+  <title>Workforce &amp; Roles • Humanly Admin Console</title>
 
   <!-- External Fonts & Icons -->
   <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -47,8 +47,14 @@
 
         <a href="admin-users.html" class="menu-item active">
           <i class="fa-solid fa-user-gear"></i>
-          <span class="menu-label">Workforce & Roles</span>
-          <span class="menu-badge" id="sidebarUserCountBadge">6 Users</span>
+          <span class="menu-label">Workforce &amp; Roles</span>
+          <span class="menu-badge" id="sidebarUserCountBadge">-- Users</span>
+        </a>
+
+        <a href="admin-audit.html" class="menu-item">
+          <i class="fa-solid fa-wave-square"></i>
+          <span class="menu-label">Live Audit Log</span>
+          <span class="menu-badge badge-pulse">Live</span>
         </a>
 
         <div class="menu-category">Employee Experience</div>
@@ -76,7 +82,7 @@
 
         <a href="calendar.html" class="menu-item">
           <i class="fa-regular fa-calendar-days"></i>
-          <span class="menu-label">Calendar & Meetings</span>
+          <span class="menu-label">Calendar &amp; Meetings</span>
         </a>
 
         <a href="directory.html" class="menu-item">
@@ -91,9 +97,12 @@
       </nav>
 
       <div class="sidebar-footer">
-        <div class="user-brief">
-          <img src="" alt="Avatar" class="user-avatar" style="width: 36px; height: 36px; border-radius: 50%; object-fit: cover; border: 2px solid var(--danger);" />
-          <div class="user-brief-info">
+        <div class="sidebar-user-card" onclick="window.location.href='settings.html'">
+          <div class="user-avatar-wrap">
+            <img src="https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=120&auto=format&fit=crop&q=80" alt="Avatar" class="user-avatar" style="border-color: var(--danger);" />
+            <div class="user-status-dot"></div>
+          </div>
+          <div class="user-info">
             <span class="user-name">Administrator</span>
             <span class="user-role" style="color: var(--danger);">Enterprise Admin</span>
           </div>
@@ -106,24 +115,23 @@
       <!-- Top Header Navbar -->
       <header class="app-header">
         <div class="header-left">
-          <button class="mobile-sidebar-toggle" id="mobileSidebarToggle" title="Open Menu">
+          <button class="sidebar-toggle-btn d-md-none" id="mobileSidebarToggle" title="Open Menu">
             <i class="fa-solid fa-bars"></i>
           </button>
-          <div class="search-box">
-            <i class="fa-solid fa-magnifying-glass search-icon"></i>
+          <div class="header-search">
+            <i class="fa-solid fa-magnifying-glass"></i>
             <input type="text" placeholder="Search users by name, email, department..." id="userSearchInput" />
+            <span class="search-shortcut" data-open-palette style="cursor: pointer;">Ctrl + K</span>
           </div>
         </div>
 
         <div class="header-right">
-          <!-- Theme Mode Switch -->
           <div class="theme-switch-btn" id="themeSwitchBtn" title="Toggle Dark/Light Mode">
             <div class="theme-switch-thumb">
               <i class="fa-solid fa-moon"></i>
             </div>
           </div>
 
-          <!-- Notifications Center Menu -->
           <div class="notification-menu-container">
             <button class="header-action-btn" id="notificationsBellBtn" title="Notifications">
               <i class="fa-regular fa-bell"></i>
@@ -141,10 +149,9 @@
             </div>
           </div>
 
-          <!-- User Quick Menu -->
           <div class="user-profile-menu-container">
             <div class="user-avatar-wrap" id="headerProfileBtn" style="cursor: pointer;">
-              <img src="" alt="User" class="user-avatar" style="width: 36px; height: 36px; border-radius: 50%; object-fit: cover; border: 2px solid var(--danger);" />
+              <img src="https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=120&auto=format&fit=crop&q=80" alt="User" class="user-avatar" style="width: 36px; height: 36px; border-radius: 50%; object-fit: cover; border: 2px solid var(--danger);" />
             </div>
 
             <div class="user-profile-dropdown" id="headerProfileDropdown">
@@ -154,6 +161,7 @@
               </div>
               <a href="admin-dashboard.html" class="dropdown-item"><i class="fa-solid fa-shield-halved"></i> Admin Console</a>
               <a href="admin-users.html" class="dropdown-item"><i class="fa-solid fa-user-gear"></i> Manage Users</a>
+              <a href="dashboard.html" class="dropdown-item"><i class="fa-solid fa-gauge-high"></i> Employee Dashboard</a>
               <a href="settings.html" class="dropdown-item"><i class="fa-solid fa-sliders"></i> System Settings</a>
               <div class="dropdown-item text-danger logout-trigger-btn" style="border-top: 1px solid var(--border-color); margin-top: 0.25rem;">
                 <i class="fa-solid fa-arrow-right-from-bracket"></i> Sign Out
@@ -165,20 +173,26 @@
 
       <!-- Page Content -->
       <div class="app-content">
-        <div class="page-header" style="display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 1rem;">
+        <div class="page-header">
           <div class="page-title-box">
             <div class="page-breadcrumbs">
               <a href="admin-dashboard.html">Humanly</a>
               <i class="fa-solid fa-chevron-right" style="font-size: 0.6rem;"></i>
               <a href="admin-dashboard.html">Admin Console</a>
               <i class="fa-solid fa-chevron-right" style="font-size: 0.6rem;"></i>
-              <span>Workforce & Roles</span>
+              <span>Workforce &amp; Roles</span>
             </div>
-            <h1 class="page-title">Workforce & Access Management</h1>
-            <p class="page-subtitle">Manage user records, grant administrator roles, configure departments, and inspect account health.</p>
+            <h1 class="page-title">Workforce &amp; Access Management</h1>
+            <p class="page-subtitle">Create accounts, assign passwords &amp; roles, edit user details, and monitor retention risk.</p>
           </div>
 
-          <div>
+          <div class="page-header-actions">
+            <a href="admin-dashboard.html" class="btn btn-secondary">
+              <i class="fa-solid fa-arrow-left"></i> Admin Console
+            </a>
+            <button class="btn btn-secondary" id="exportUsersCsvBtn">
+              <i class="fa-solid fa-file-csv"></i> Export CSV
+            </button>
             <button class="btn btn-primary" id="openAddUserModalBtn">
               <i class="fa-solid fa-user-plus"></i> Add New User
             </button>
@@ -191,8 +205,9 @@
             <span style="font-size: 0.82rem; font-weight: 700; color: var(--text-secondary);"><i class="fa-solid fa-filter"></i> Filter Role:</span>
             <div class="chart-type-pill-group">
               <button class="chart-type-pill active" data-role-filter="all">All Roles</button>
-              <button class="chart-type-pill" data-role-filter="admin">Admins Only</button>
-              <button class="chart-type-pill" data-role-filter="employee">Employees Only</button>
+              <button class="chart-type-pill" data-role-filter="admin">Admins</button>
+              <button class="chart-type-pill" data-role-filter="hr_manager">HR Managers</button>
+              <button class="chart-type-pill" data-role-filter="employee">Employees</button>
             </div>
           </div>
 
@@ -227,58 +242,177 @@
   </div>
 
   <!-- Add User Modal -->
-  <div class="modal-overlay" id="addUserModal" style="display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.7); z-index: 500; align-items: center; justify-content: center;">
-    <div class="card" style="max-width: 480px; width: 90%;">
-      <div class="card-header">
-        <h3 class="card-title"><i class="fa-solid fa-user-plus"></i> Add User to Database</h3>
-        <button id="closeAddUserModalBtn" style="background: none; border: none; color: var(--text-muted); cursor: pointer; font-size: 1.1rem;"><i class="fa-solid fa-xmark"></i></button>
+  <div class="modal-overlay" id="addUserModal">
+    <div class="modal-container" style="max-width: 500px;">
+      <div class="modal-header">
+        <h3 class="modal-title"><i class="fa-solid fa-user-plus" style="color: var(--primary); margin-right: 0.45rem;"></i> Create New User</h3>
+        <button class="modal-close-btn" id="closeAddUserModalBtn"><i class="fa-solid fa-xmark"></i></button>
       </div>
-      <form id="addUserForm" style="padding: 1.25rem;">
-        <div class="auth-form-group" style="margin-bottom: 0.9rem;">
-          <label style="display: block; font-size: 0.8rem; font-weight: 600; margin-bottom: 0.35rem;">Full Name</label>
-          <input type="text" id="newUserName" required placeholder="e.g. Marcus Vance" style="width: 100%; padding: 0.65rem; background: var(--bg-input); border: 1px solid var(--border-color); border-radius: var(--radius-md); color: var(--text-primary);" />
-        </div>
+      <form id="addUserForm">
+        <div class="modal-body">
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.85rem; margin-bottom: 0.9rem;">
+            <div>
+              <label style="display: block; font-size: 0.8rem; font-weight: 600; margin-bottom: 0.35rem;">Full Name</label>
+              <input type="text" id="newUserName" required placeholder="e.g. Marcus Vance" style="width: 100%;" />
+            </div>
+            <div>
+              <label style="display: block; font-size: 0.8rem; font-weight: 600; margin-bottom: 0.35rem;">Work Email</label>
+              <input type="email" id="newUserEmail" required placeholder="marcus@humanly.io" style="width: 100%;" />
+            </div>
+          </div>
 
-        <div class="auth-form-group" style="margin-bottom: 0.9rem;">
-          <label style="display: block; font-size: 0.8rem; font-weight: 600; margin-bottom: 0.35rem;">Work Email</label>
-          <input type="email" id="newUserEmail" required placeholder="marcus.vance@humanly.io" style="width: 100%; padding: 0.65rem; background: var(--bg-input); border: 1px solid var(--border-color); border-radius: var(--radius-md); color: var(--text-primary);" />
-        </div>
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.85rem; margin-bottom: 0.9rem;">
+            <div>
+              <label style="display: block; font-size: 0.8rem; font-weight: 600; margin-bottom: 0.35rem;">Job Title</label>
+              <input type="text" id="newUserTitle" required placeholder="e.g. Senior Engineer" style="width: 100%;" />
+            </div>
+            <div>
+              <label style="display: block; font-size: 0.8rem; font-weight: 600; margin-bottom: 0.35rem;">Department</label>
+              <select id="newUserDept" style="width: 100%;">
+                <option value="Engineering">Engineering</option>
+                <option value="Product & Design">Product &amp; Design</option>
+                <option value="People Operations">People Operations</option>
+                <option value="Executive Operations">Executive Operations</option>
+                <option value="Customer Support">Customer Support</option>
+                <option value="Marketing & Sales">Marketing &amp; Sales</option>
+              </select>
+            </div>
+          </div>
 
-        <div class="auth-form-group" style="margin-bottom: 0.9rem;">
-          <label style="display: block; font-size: 0.8rem; font-weight: 600; margin-bottom: 0.35rem;">Job Title</label>
-          <input type="text" id="newUserTitle" required placeholder="e.g. Senior Security Engineer" style="width: 100%; padding: 0.65rem; background: var(--bg-input); border: 1px solid var(--border-color); border-radius: var(--radius-md); color: var(--text-primary);" />
-        </div>
+          <div style="margin-bottom: 0.9rem;">
+            <label style="display: block; font-size: 0.8rem; font-weight: 600; margin-bottom: 0.35rem;">System Role</label>
+            <select id="newUserRole" style="width: 100%;">
+              <option value="employee">Standard Employee</option>
+              <option value="hr_manager">HR Manager</option>
+              <option value="admin">Administrator (Admin Console)</option>
+            </select>
+          </div>
 
-        <div class="auth-form-group" style="margin-bottom: 0.9rem;">
-          <label style="display: block; font-size: 0.8rem; font-weight: 600; margin-bottom: 0.35rem;">Department</label>
-          <select id="newUserDept" style="width: 100%; padding: 0.65rem; background: var(--bg-surface); border: 1px solid var(--border-color); border-radius: var(--radius-md); color: var(--text-primary);">
-            <option value="Engineering">Engineering</option>
-            <option value="Product & Design">Product & Design</option>
-            <option value="People Operations">People Operations</option>
-            <option value="Customer Support">Customer Support</option>
-            <option value="Marketing & Sales">Marketing & Sales</option>
-          </select>
+          <div>
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.35rem;">
+              <label style="font-size: 0.8rem; font-weight: 600;">Initial Password (min 6 chars)</label>
+              <button type="button" id="generateNewPwBtn" style="font-size: 0.74rem; color: var(--primary); font-weight: 600;"><i class="fa-solid fa-wand-magic-sparkles"></i> Generate</button>
+            </div>
+            <div style="position: relative;">
+              <input type="password" id="newUserPassword" required minlength="6" value="Humanly@2026!" style="width: 100%; padding-right: 2.5rem;" />
+              <span id="toggleNewUserPw" style="position: absolute; right: 0.85rem; top: 50%; transform: translateY(-50%); color: var(--text-muted); cursor: pointer;">
+                <i class="fa-solid fa-eye"></i>
+              </span>
+            </div>
+          </div>
         </div>
-
-        <div class="auth-form-group" style="margin-bottom: 0.9rem;">
-          <label style="display: block; font-size: 0.8rem; font-weight: 600; margin-bottom: 0.35rem;">System Role</label>
-          <select id="newUserRole" style="width: 100%; padding: 0.65rem; background: var(--bg-surface); border: 1px solid var(--border-color); border-radius: var(--radius-md); color: var(--text-primary);">
-            <option value="employee">Standard Employee</option>
-            <option value="admin">Administrator (Admin Console)</option>
-          </select>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" id="cancelAddUserModalBtn">Cancel</button>
+          <button type="submit" class="btn btn-primary"><i class="fa-solid fa-user-plus"></i> Save User</button>
         </div>
-
-        <div class="auth-form-group" style="margin-bottom: 1.25rem;">
-          <label style="display: block; font-size: 0.8rem; font-weight: 600; margin-bottom: 0.35rem;">Initial Password</label>
-          <input type="password" id="newUserPassword" required value="Humanly@2026!" style="width: 100%; padding: 0.65rem; background: var(--bg-input); border: 1px solid var(--border-color); border-radius: var(--radius-md); color: var(--text-primary);" />
-        </div>
-
-        <button type="submit" class="btn btn-primary" style="width: 100%; padding: 0.75rem;">
-          <i class="fa-solid fa-user-plus"></i> Save User to Database
-        </button>
       </form>
     </div>
   </div>
+
+  <!-- Edit User Modal -->
+  <div class="modal-overlay" id="editUserModal">
+    <div class="modal-container" style="max-width: 480px;">
+      <div class="modal-header">
+        <h3 class="modal-title"><i class="fa-solid fa-user-pen" style="color: var(--primary); margin-right: 0.45rem;"></i> Edit User Details</h3>
+        <button class="modal-close-btn" id="closeEditUserModalBtn"><i class="fa-solid fa-xmark"></i></button>
+      </div>
+      <form id="editUserForm">
+        <input type="hidden" id="editUserId" />
+        <div class="modal-body">
+          <div style="margin-bottom: 0.9rem;">
+            <label style="display: block; font-size: 0.8rem; font-weight: 600; margin-bottom: 0.35rem;">Full Name</label>
+            <input type="text" id="editUserName" required style="width: 100%;" />
+          </div>
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.85rem; margin-bottom: 0.9rem;">
+            <div>
+              <label style="display: block; font-size: 0.8rem; font-weight: 600; margin-bottom: 0.35rem;">Department</label>
+              <select id="editUserDept" style="width: 100%;">
+                <option value="Engineering">Engineering</option>
+                <option value="Product & Design">Product &amp; Design</option>
+                <option value="People Operations">People Operations</option>
+                <option value="Executive Operations">Executive Operations</option>
+                <option value="Customer Support">Customer Support</option>
+                <option value="Marketing & Sales">Marketing &amp; Sales</option>
+                <option value="Design">Design</option>
+              </select>
+            </div>
+            <div>
+              <label style="display: block; font-size: 0.8rem; font-weight: 600; margin-bottom: 0.35rem;">Job Title</label>
+              <input type="text" id="editUserTitle" required style="width: 100%;" />
+            </div>
+          </div>
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.85rem;">
+            <div>
+              <label style="display: block; font-size: 0.8rem; font-weight: 600; margin-bottom: 0.35rem;">Status</label>
+              <select id="editUserStatus" style="width: 100%;">
+                <option value="Online">Online</option>
+                <option value="Focus Mode">Focus Mode</option>
+                <option value="In a Meeting">In a Meeting</option>
+                <option value="Away">Away</option>
+              </select>
+            </div>
+            <div>
+              <label style="display: block; font-size: 0.8rem; font-weight: 600; margin-bottom: 0.35rem;">Retention Risk (%)</label>
+              <input type="number" step="0.1" min="0" max="100" id="editUserRisk" style="width: 100%;" />
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" id="cancelEditUserModalBtn">Cancel</button>
+          <button type="submit" class="btn btn-primary"><i class="fa-solid fa-check"></i> Save Changes</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Set / Reset Password Modal -->
+  <div class="modal-overlay" id="resetPasswordModal">
+    <div class="modal-container" style="max-width: 440px;">
+      <div class="modal-header">
+        <h3 class="modal-title"><i class="fa-solid fa-key" style="color: var(--warning); margin-right: 0.45rem;"></i> Set User Password</h3>
+        <button class="modal-close-btn" id="closeResetPwModalBtn"><i class="fa-solid fa-xmark"></i></button>
+      </div>
+      <form id="resetPasswordForm">
+        <input type="hidden" id="resetPwUserId" />
+        <div class="modal-body">
+          <p style="font-size: 0.82rem; color: var(--text-secondary); margin-bottom: 1rem;">
+            Assign a new PBKDF2-encrypted password for <strong id="resetPwUserName" style="color: var(--text-primary);"></strong>.
+          </p>
+          <div>
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.35rem;">
+              <label style="font-size: 0.8rem; font-weight: 600;">New Password (min 6 chars)</label>
+              <button type="button" id="generateResetPwBtn" style="font-size: 0.74rem; color: var(--primary); font-weight: 600;"><i class="fa-solid fa-wand-magic-sparkles"></i> Generate</button>
+            </div>
+            <div style="position: relative;">
+              <input type="password" id="resetPwInput" required minlength="6" placeholder="Enter new password" style="width: 100%; padding-right: 2.5rem;" />
+              <span id="toggleResetPw" style="position: absolute; right: 0.85rem; top: 50%; transform: translateY(-50%); color: var(--text-muted); cursor: pointer;">
+                <i class="fa-solid fa-eye"></i>
+              </span>
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" id="cancelResetPwModalBtn">Cancel</button>
+          <button type="submit" class="btn btn-primary"><i class="fa-solid fa-shield-halved"></i> Update Password</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Command Palette Modal (Ctrl+K) -->
+  <div class="modal-overlay" id="commandPaletteModal">
+    <div class="command-palette">
+      <div class="palette-search-box">
+        <i class="fa-solid fa-magnifying-glass"></i>
+        <input type="text" id="commandPaletteInput" placeholder="Type a view, action, or command..." autocomplete="off" />
+        <span class="search-shortcut">ESC to close</span>
+      </div>
+      <div class="palette-results-list" id="paletteResults"></div>
+    </div>
+  </div>
+
+  <!-- Toast Notification Container -->
+  <div class="toast-container" id="toastContainer"></div>
 
   <!-- Scripts -->
   <script src="../js/app.js"></script>

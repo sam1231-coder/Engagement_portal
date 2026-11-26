@@ -27,128 +27,193 @@
   <body>
     <!-- Full Viewport Responsive Authentication Screen -->
     <div class="auth-page-root">
-      
-      <!-- Ambient Blurred Glow Elements (Subtle, Deep, Zero Eye Strain) -->
+
+      <!-- Subtle Ambient Glow Elements in Background -->
       <div class="auth-bg-ambient" aria-hidden="true">
         <div class="glow-orb glow-orb-1"></div>
         <div class="glow-orb glow-orb-2"></div>
         <div class="glow-orb glow-orb-3"></div>
       </div>
 
-      <!-- Beautiful Glassmorphism Authentication Card -->
-      <div class="auth-glass-card">
-        
-        <!-- Humanly Brand Header -->
-        <div class="auth-glass-brand">
-          <div class="auth-glass-icon">
-            <i class="fa-solid fa-users-viewfinder"></i>
-          </div>
-          <h2 class="auth-glass-title" id="authFormTitle">HUMANLY</h2>
-          <p class="auth-glass-subtitle" id="authFormSubtitle">
-            Enterprise People Analytics, Engagement & Culture Platform
-          </p>
-        </div>
+      <!-- Two-Column Split Shell: Left = Glass Login Section, Right = Background Portal Details -->
+      <div class="auth-split-shell">
 
-        <!-- 1. SIGN IN FORM -->
-        <form id="loginForm">
-          <div class="auth-form-group" style="margin-bottom: 1.15rem;">
-            <label class="auth-label" for="loginEmail" style="display: block; font-size: 0.8rem; font-weight: 600; color: var(--text-secondary); margin-bottom: 0.45rem;">
-              Work Email Address
-            </label>
-            <div class="auth-input-wrapper" style="position: relative;">
-              <i class="fa-regular fa-envelope input-icon" style="position: absolute; left: 1rem; top: 50%; transform: translateY(-50%); color: var(--text-muted); pointer-events: none;"></i>
-              <input
-                type="email"
-                id="loginEmail"
-                class="glass-input"
-                required
-                placeholder="name@humanly.io"
-                value="admin@humanly.io"
-              />
+        <!-- LEFT DIV: Login Section -->
+        <div class="auth-glass-card auth-login-pane">
+          <div class="auth-glass-brand">
+            <div class="auth-glass-icon">
+              <i class="fa-solid fa-users-viewfinder"></i>
             </div>
+            <h2 class="auth-glass-title" id="authFormTitle">HUMANLY</h2>
+            <p class="auth-glass-subtitle" id="authFormSubtitle">
+              Sign in to your People &amp; Engagement workspace
+            </p>
           </div>
 
-          <div class="auth-form-group" style="margin-bottom: 1.15rem;">
-            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.45rem;">
-              <label class="auth-label" for="loginPassword" style="font-size: 0.8rem; font-weight: 600; color: var(--text-secondary);">
-                Password
+          <form id="loginForm">
+            <div class="auth-form-group" style="margin-bottom: 1.05rem;">
+              <label class="auth-label" for="loginEmail" style="display: block; font-size: 0.8rem; font-weight: 600; color: var(--text-secondary); margin-bottom: 0.45rem;">
+                Work Email Address
               </label>
-              <a href="#" id="forgotPwLink" style="font-size: 0.76rem; color: var(--primary); text-decoration: none; font-weight: 500;">Forgot password?</a>
+              <div class="auth-input-wrapper" style="position: relative;">
+                <i class="fa-regular fa-envelope input-icon" style="position: absolute; left: 1rem; top: 50%; transform: translateY(-50%); color: var(--text-muted); pointer-events: none;"></i>
+                <input
+                  type="email"
+                  id="loginEmail"
+                  class="glass-input"
+                  required
+                  placeholder="name@humanly.io"
+                  value="admin@humanly.io"
+                />
+              </div>
             </div>
-            <div class="auth-input-wrapper" style="position: relative;">
-              <i class="fa-solid fa-lock input-icon" style="position: absolute; left: 1rem; top: 50%; transform: translateY(-50%); color: var(--text-muted); pointer-events: none;"></i>
-              <input
-                type="password"
-                id="loginPassword"
-                class="glass-input"
-                required
-                value="Admin@2026!"
-                placeholder="Enter account password"
-                style="padding-right: 2.75rem;"
-              />
-              <span id="togglePasswordBtn" style="position: absolute; right: 1rem; top: 50%; transform: translateY(-50%); color: var(--text-muted); cursor: pointer; padding: 0.25rem;">
-                <i class="fa-solid fa-eye"></i>
+
+            <div class="auth-form-group" style="margin-bottom: 1.05rem;">
+              <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.45rem;">
+                <label class="auth-label" for="loginPassword" style="font-size: 0.8rem; font-weight: 600; color: var(--text-secondary);">
+                  Password
+                </label>
+                <a href="#" id="forgotPwLink" style="font-size: 0.76rem; color: var(--primary); text-decoration: none; font-weight: 500;">Forgot password?</a>
+              </div>
+              <div class="auth-input-wrapper" style="position: relative;">
+                <i class="fa-solid fa-lock input-icon" style="position: absolute; left: 1rem; top: 50%; transform: translateY(-50%); color: var(--text-muted); pointer-events: none;"></i>
+                <input
+                  type="password"
+                  id="loginPassword"
+                  class="glass-input"
+                  required
+                  value="Admin@2026!"
+                  placeholder="Enter account password"
+                  style="padding-right: 2.75rem;"
+                />
+                <span id="togglePasswordBtn" title="Show/Hide Password" style="position: absolute; right: 1rem; top: 50%; transform: translateY(-50%); color: var(--text-muted); cursor: pointer; padding: 0.25rem;">
+                  <i class="fa-solid fa-eye"></i>
+                </span>
+              </div>
+            </div>
+
+            <div id="loginErrorAlert" style="display: none; padding: 0.7rem 0.9rem; background: rgba(239, 68, 68, 0.14); border: 1px solid var(--danger); border-radius: var(--radius-md); color: #fca5a5; font-size: 0.78rem; margin-bottom: 1.05rem;">
+              <i class="fa-solid fa-circle-exclamation"></i> <span id="loginErrorMsg">Invalid credentials.</span>
+            </div>
+
+            <button
+              type="submit"
+              id="loginSubmitBtn"
+              class="btn btn-primary"
+              style="width: 100%; padding: 0.78rem; font-size: 0.92rem; font-weight: 700; display: flex; align-items: center; justify-content: center; gap: 0.5rem; border-radius: var(--radius-md);"
+            >
+              <i class="fa-solid fa-arrow-right-to-bracket"></i> Sign In to Portal
+            </button>
+          </form>
+
+          <!-- Register Link -->
+          <div class="auth-switch-prompt">
+            <span class="auth-switch-text">New to Humanly?</span>
+            <a href="register.html" class="auth-switch-btn" style="text-decoration: none;">
+              <i class="fa-solid fa-user-plus"></i> Create Account
+            </a>
+          </div>
+
+          <!-- Pre-Seeded Database Accounts Drawer for Quick Testing -->
+          <div class="glass-seeded-drawer">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.65rem;">
+              <span style="font-size: 0.72rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; color: var(--text-muted); display: flex; align-items: center; gap: 0.4rem;">
+                <i class="fa-solid fa-database" style="color: var(--primary);"></i> Quick Demo Accounts
               </span>
+              <span class="card-badge" style="font-size: 0.62rem; padding: 0.15rem 0.45rem;">Click to Autofill</span>
+            </div>
+
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem;">
+              <button type="button" class="glass-seed-btn" id="fillAdminBtn">
+                <span style="font-size: 0.74rem; font-weight: 700; color: var(--danger); display: flex; align-items: center; gap: 0.3rem;">
+                  <i class="fa-solid fa-shield-halved"></i> Administrator
+                </span>
+                <span style="font-size: 0.68rem; color: var(--text-muted); margin-top: 0.15rem;">admin@humanly.io</span>
+              </button>
+
+              <button type="button" class="glass-seed-btn" id="fillEmpBtn">
+                <span style="font-size: 0.74rem; font-weight: 700; color: var(--primary); display: flex; align-items: center; gap: 0.3rem;">
+                  <i class="fa-solid fa-user"></i> Employee
+                </span>
+                <span style="font-size: 0.68rem; color: var(--text-muted); margin-top: 0.15rem;">alex.vance@humanly.io</span>
+              </button>
             </div>
           </div>
 
-          <div id="loginErrorAlert" style="display: none; padding: 0.7rem 0.9rem; background: rgba(185, 28, 28, 0.16); border: 1px solid var(--danger); border-radius: var(--radius-md); color: #fca5a5; font-size: 0.78rem; margin-bottom: 1.15rem;">
-            <i class="fa-solid fa-circle-exclamation"></i> <span id="loginErrorMsg">Invalid credentials.</span>
-          </div>
-
-          <button
-            type="submit"
-            id="loginSubmitBtn"
-            class="btn btn-primary"
-            style="width: 100%; padding: 0.75rem; font-size: 0.92rem; font-weight: 700; display: flex; align-items: center; justify-content: center; gap: 0.5rem; border-radius: var(--radius-md); box-shadow: 0 4px 14px rgba(37, 99, 235, 0.35);"
-          >
-            <i class="fa-solid fa-arrow-right-to-bracket"></i> Sign In to Portal
-          </button>
-        </form>
-
-        <!-- Pre-Seeded Database Accounts Drawer for Quick Testing -->
-        <div class="glass-seeded-drawer">
-          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.65rem;">
-            <span style="font-size: 0.72rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; color: var(--text-muted); display: flex; align-items: center; gap: 0.4rem;">
-              <i class="fa-solid fa-database" style="color: var(--primary);"></i> Seeded Database Accounts
-            </span>
-            <span class="card-badge" style="font-size: 0.62rem; padding: 0.15rem 0.45rem;">Click to Autofill</span>
-          </div>
-
-          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem;" class="grid-cols-2">
-            <!-- Admin Persona Fill -->
-            <button
-              type="button"
-              class="glass-seed-btn"
-              id="fillAdminBtn"
-            >
-              <span style="font-size: 0.74rem; font-weight: 700; color: var(--danger); display: flex; align-items: center; gap: 0.3rem;">
-                <i class="fa-solid fa-shield-halved"></i> Administrator
-              </span>
-              <span style="font-size: 0.68rem; color: var(--text-muted); margin-top: 0.15rem;">admin@humanly.io</span>
-            </button>
-
-            <!-- Employee Persona Fill -->
-            <button
-              type="button"
-              class="glass-seed-btn"
-              id="fillEmpBtn"
-            >
-              <span style="font-size: 0.74rem; font-weight: 700; color: var(--primary); display: flex; align-items: center; gap: 0.3rem;">
-                <i class="fa-solid fa-user"></i> Employee
-              </span>
-              <span style="font-size: 0.68rem; color: var(--text-muted); margin-top: 0.15rem;">alex.vance@humanly.io</span>
-            </button>
+          <div style="text-align: center; margin-top: 1rem; font-size: 0.72rem; color: var(--text-muted);">
+            <i class="fa-solid fa-shield-halved" style="color: var(--success);"></i> PBKDF2 / SHA-512 Encrypted Sessions
           </div>
         </div>
 
-        <!-- Security Badge -->
-        <div style="text-align: center; margin-top: 1.15rem; font-size: 0.72rem; color: var(--text-muted);">
-          <i class="fa-solid fa-shield-halved" style="color: var(--success);"></i> Enterprise Database PBKDF2/SHA-512 Security
-        </div>
+        <!-- RIGHT DIV: Details About the Page & Platform -->
+        <aside class="auth-info-pane">
+          <div class="auth-info-badge">
+            <i class="fa-solid fa-sparkles"></i> Enterprise People, Culture &amp; Engagement OS
+          </div>
+          <h1 class="auth-info-heading">
+            Understand Your Workforce.<br />Elevate Everyday Culture.
+          </h1>
+          <p class="auth-info-lead">
+            Humanly unifies real-time employee engagement telemetry, pulse surveys, peer recognition, and executive workforce administration in one cohesive, privacy-first portal.
+          </p>
+
+          <div class="auth-feature-grid">
+            <div class="auth-feature-card">
+              <div class="auth-feature-icon"><i class="fa-solid fa-chart-line"></i></div>
+              <div>
+                <h3>Live eNPS &amp; Pulse</h3>
+                <p>Track organizational sentiment, departmental alignment radars, and participation trends in real time.</p>
+              </div>
+            </div>
+
+            <div class="auth-feature-card">
+              <div class="auth-feature-icon"><i class="fa-solid fa-chart-pie"></i></div>
+              <div>
+                <h3>Document Analytics Studio</h3>
+                <p>Drop CSV, Excel, or PDF reports to synthesize interactive charts and executive summaries instantly.</p>
+              </div>
+            </div>
+
+            <div class="auth-feature-card">
+              <div class="auth-feature-icon"><i class="fa-solid fa-award"></i></div>
+              <div>
+                <h3>Peer Kudos &amp; Directory</h3>
+                <p>Celebrate core-value wins, schedule 1-on-1 syncs, and monitor team retention health.</p>
+              </div>
+            </div>
+
+            <div class="auth-feature-card">
+              <div class="auth-feature-icon"><i class="fa-solid fa-user-shield"></i></div>
+              <div>
+                <h3>Admin Console &amp; RBAC</h3>
+                <p>Create accounts, assign roles, manage passwords, launch surveys, and inspect live audit logs.</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="auth-info-stats">
+            <div class="auth-stat-item">
+              <strong>+68 eNPS</strong>
+              <span>Org Benchmark</span>
+            </div>
+            <div class="auth-stat-divider"></div>
+            <div class="auth-stat-item">
+              <strong>93.8%</strong>
+              <span>Survey Turnout</span>
+            </div>
+            <div class="auth-stat-divider"></div>
+            <div class="auth-stat-item">
+              <strong>SQLite + RBAC</strong>
+              <span>Persistent Storage</span>
+            </div>
+          </div>
+        </aside>
 
       </div>
     </div>
+
+    <!-- Toast Notification Container -->
+    <div class="toast-container" id="toastContainer"></div>
 
     <!-- Scripts -->
     <script src="../js/app.js"></script>
@@ -162,12 +227,14 @@
         document.getElementById("fillAdminBtn")?.addEventListener("click", () => {
           document.getElementById("loginEmail").value = "admin@humanly.io";
           document.getElementById("loginPassword").value = "Admin@2026!";
+          App.playSound("click");
           App.showToast("Credentials Loaded", "Loaded Administrator account (admin@humanly.io)", "info");
         });
 
         document.getElementById("fillEmpBtn")?.addEventListener("click", () => {
           document.getElementById("loginEmail").value = "alex.vance@humanly.io";
           document.getElementById("loginPassword").value = "Employee@2026!";
+          App.playSound("click");
           App.showToast("Credentials Loaded", "Loaded Employee account (alex.vance@humanly.io)", "info");
         });
 
@@ -179,10 +246,6 @@
           passInput.setAttribute("type", isPass ? "text" : "password");
           toggleBtn.innerHTML = isPass ? '<i class="fa-solid fa-eye-slash"></i>' : '<i class="fa-solid fa-eye"></i>';
         });
-
-        // Initialize Theme from localStorage (defaults to dark mode)
-        const savedTheme = localStorage.getItem("humanly_theme") || localStorage.getItem("adminator_theme") || "dark";
-        document.documentElement.setAttribute("data-theme", savedTheme);
 
         // Login Submission
         loginForm.addEventListener("submit", async (e) => {
@@ -207,7 +270,7 @@
 
         document.getElementById("forgotPwLink")?.addEventListener("click", (e) => {
           e.preventDefault();
-          alert("A temporary reset token has been dispatched to your corporate inbox.");
+          App.showToast("Password Reset", "Contact your Administrator in Workforce & Roles to reset your password.", "info");
         });
       });
     </script>

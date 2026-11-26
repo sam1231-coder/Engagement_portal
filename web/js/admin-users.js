@@ -1,6 +1,6 @@
 /**
  * HUMANLY - Admin Users & Role Management Controller
- * Connects to /api/users for CRUD operations and role modifications.
+ * Full CRUD: Create user with password, edit details, reset password, change role, delete user, export CSV.
  */
 
 document.addEventListener("DOMContentLoaded", () => {
@@ -10,18 +10,65 @@ document.addEventListener("DOMContentLoaded", () => {
   const tableBody = document.getElementById("userTableBody");
   const countDisplay = document.getElementById("userDisplayCount");
   const searchInput = document.getElementById("userSearchInput");
-  const addUserModal = document.getElementById("addUserModal");
   const roleFilterPills = document.querySelectorAll("[data-role-filter]");
+
+  const addUserModal = document.getElementById("addUserModal");
+  const editUserModal = document.getElementById("editUserModal");
+  const resetPwModal = document.getElementById("resetPasswordModal");
 
   let allUsers = [];
   let currentFilter = "all";
   let searchQuery = "";
 
-  document.getElementById("openAddUserModalBtn")?.addEventListener("click", () => {
-    addUserModal.style.display = "flex";
+  function generateStrongPassword() {
+    const chars = "ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz23456789!@#$";
+    let pw = "Hmn!";
+    for (let i = 0; i < 8; i++) pw += chars[Math.floor(Math.random() * chars.length)];
+    return pw;
+  }
+
+  function wirePasswordToggle(toggleId, inputId) {
+    const toggle = document.getElementById(toggleId);
+    const input = document.getElementById(inputId);
+    toggle?.addEventListener("click", () => {
+      const isPass = input.getAttribute("type") === "password";
+      input.setAttribute("type", isPass ? "text" : "password");
+      toggle.innerHTML = isPass ? '<i class="fa-solid fa-eye-slash"></i>' : '<i class="fa-solid fa-eye"></i>';
+    });
+  }
+
+  wirePasswordToggle("toggleNewUserPw", "newUserPassword");
+  wirePasswordToggle("toggleResetPw", "resetPwInput");
+
+  document.getElementById("generateNewPwBtn")?.addEventListener("click", () => {
+    const inp = document.getElementById("newUserPassword");
+    inp.value = generateStrongPassword();
+    inp.setAttribute("type", "text");
+    App.playSound("click");
   });
-  document.getElementById("closeAddUserModalBtn")?.addEventListener("click", () => {
-    addUserModal.style.display = "none";
+
+  document.getElementById("generateResetPwBtn")?.addEventListener("click", () => {
+    const inp = document.getElementById("resetPwInput");
+    inp.value = generateStrongPassword();
+    inp.setAttribute("type", "text");
+    App.playSound("click");
+  });
+
+  // Modal Open/Close
+  document.getElementById("openAddUserModalBtn")?.addEventListener("click", () => addUserModal.classList.add("active"));
+  document.getElementById("closeAddUserModalBtn")?.addEventListener("click", () => addUserModal.classList.remove("active"));
+  document.getElementById("cancelAddUserModalBtn")?.addEventListener("click", () => addUserModal.classList.remove("active"));
+
+  document.getElementById("closeEditUserModalBtn")?.addEventListener("click", () => editUserModal.classList.remove("active"));
+  document.getElementById("cancelEditUserModalBtn")?.addEventListener("click", () => editUserModal.classList.remove("active"));
+
+  document.getElementById("closeResetPwModalBtn")?.addEventListener("click", () => resetPwModal.classList.remove("active"));
+  document.getElementById("cancelResetPwModalBtn")?.addEventListener("click", () => resetPwModal.classList.remove("active"));
+
+  [addUserModal, editUserModal, resetPwModal].forEach(m => {
+    m?.addEventListener("click", (e) => {
+      if (e.target === m) m.classList.remove("active");
+    });
   });
 
   // Role Filter Pills
@@ -41,12 +88,35 @@ document.addEventListener("DOMContentLoaded", () => {
     renderUsers();
   });
 
+  // Export CSV
+  document.getElementById("exportUsersCsvBtn")?.addEventListener("click", () => {
+    if (!allUsers.length) return;
+    const rows = [["ID", "Name", "Email", "Department", "Title", "Role", "Status", "RetentionRisk"]];
+    allUsers.forEach(u => {
+      rows.push([u.id, u.name, u.email, u.department, u.title, u.role, u.status, u.retention_risk]);
+    });
+    const csv = rows.map(r => r.map(v => `"${String(v ?? "").replace(/"/g, '""')}"`).join(",")).join("\n");
+    const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = `humanly_workforce_${new Date().toISOString().slice(0, 10)}.csv`;
+    a.click();
+    URL.revokeObjectURL(url);
+    App.playSound("success");
+    App.showToast("Exported", "Workforce CSV downloaded", "success");
+  });
+
   // Fetch Users from Database API
   async function loadUsers() {
     try {
       const res = await fetch("/api/users", {
         headers: { "Authorization": `Bearer ${AuthGuard.getToken()}` }
       });
+      if (res.status === 401 || res.status === 403) {
+        AuthGuard.logout();
+        return;
+      }
       const data = await res.json();
       if (!res.ok || !data.success) throw new Error(data.message);
 
@@ -62,7 +132,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
   // Render Table
   function renderUsers() {
-    let filtered = allUsers.filter(u => {
+    const filtered = allUsers.filter(u => {
       const matchesRole = currentFilter === "all" || u.role === currentFilter;
       const matchesSearch = !searchQuery ||
         u.name.toLowerCase().includes(searchQuery) ||
@@ -84,10 +154,10 @@ document.addEventListener("DOMContentLoaded", () => {
       const isSelf = u.id === user.id;
 
       let riskColor = "var(--success)";
-      let riskLabel = "Low (Healthy)";
+      let riskLabel = "Low";
       if (u.retention_risk >= 7) {
         riskColor = "var(--danger)";
-        riskLabel = "High (Watch)";
+        riskLabel = "High";
       } else if (u.retention_risk >= 5) {
         riskColor = "#d97706";
         riskLabel = "Moderate";
@@ -99,7 +169,9 @@ document.addEventListener("DOMContentLoaded", () => {
             <div style="display: flex; align-items: center; gap: 0.75rem;">
               <img src="${u.avatar}" alt="${u.name}" style="width: 38px; height: 38px; border-radius: 50%; object-fit: cover; border: 2px solid ${isAdmin ? 'var(--danger)' : 'var(--border-color)'};" />
               <div>
-                <div style="font-weight: 700; color: var(--text-primary); font-size: 0.88rem;">${u.name} ${isSelf ? '<span class="card-badge" style="font-size: 0.62rem; background: var(--bg-surface);">(You)</span>' : ''}</div>
+                <div style="font-weight: 700; color: var(--text-primary); font-size: 0.88rem;">
+                  ${u.name} ${isSelf ? '<span class="card-badge" style="font-size: 0.62rem;">You</span>' : ''}
+                </div>
                 <div style="font-size: 0.74rem; color: var(--text-muted);">${u.email}</div>
               </div>
             </div>
@@ -107,8 +179,9 @@ document.addEventListener("DOMContentLoaded", () => {
           <td><span class="card-badge">${u.department}</span></td>
           <td style="color: var(--text-secondary);">${u.title || "Team Member"}</td>
           <td>
-            <select class="role-changer-select" data-user-id="${u.id}" ${isSelf ? 'disabled title="Cannot demote yourself"' : ''} style="font-size: 0.78rem; font-weight: 600; padding: 0.3rem 0.6rem; border-radius: var(--radius-sm); background: ${isAdmin ? 'rgba(185, 28, 28, 0.15)' : 'var(--bg-surface)'}; color: ${isAdmin ? 'var(--danger)' : 'var(--text-primary)'}; border: 1px solid var(--border-color);">
+            <select class="role-changer-select" data-user-id="${u.id}" ${isSelf ? 'disabled title="Cannot demote yourself"' : ''} style="font-size: 0.78rem; font-weight: 600; padding: 0.3rem 0.6rem; border-radius: var(--radius-sm); background: ${isAdmin ? 'rgba(239, 68, 68, 0.14)' : 'var(--bg-surface)'}; color: ${isAdmin ? 'var(--danger)' : 'var(--text-primary)'}; border: 1px solid var(--border-color);">
               <option value="employee" ${u.role === 'employee' ? 'selected' : ''}>Employee</option>
+              <option value="hr_manager" ${u.role === 'hr_manager' ? 'selected' : ''}>HR Manager</option>
               <option value="admin" ${u.role === 'admin' ? 'selected' : ''}>Administrator</option>
             </select>
           </td>
@@ -118,12 +191,20 @@ document.addEventListener("DOMContentLoaded", () => {
               <span>${riskLabel} (${u.retention_risk || 5.0}%)</span>
             </div>
           </td>
-          <td style="text-align: right;">
-            ${isSelf ? '<span style="font-size: 0.75rem; color: var(--text-muted);">Active Session</span>' : `
-              <button class="btn btn-sm btn-secondary delete-user-btn" data-user-id="${u.id}" data-user-name="${u.name}" title="Deactivate & Delete Account" style="color: var(--danger); border-color: rgba(185, 28, 28, 0.3);">
-                <i class="fa-solid fa-trash-can"></i>
+          <td style="text-align: right; white-space: nowrap;">
+            <div style="display: inline-flex; gap: 0.35rem; align-items: center;">
+              <button class="btn btn-sm btn-secondary edit-user-btn" data-user-id="${u.id}" title="Edit User Details">
+                <i class="fa-solid fa-pen"></i>
               </button>
-            `}
+              <button class="btn btn-sm btn-secondary reset-pw-btn" data-user-id="${u.id}" data-user-name="${u.name}" title="Set / Reset Password">
+                <i class="fa-solid fa-key" style="color: var(--warning);"></i>
+              </button>
+              ${isSelf ? '' : `
+                <button class="btn btn-sm btn-secondary delete-user-btn" data-user-id="${u.id}" data-user-name="${u.name}" title="Delete Account" style="color: var(--danger);">
+                  <i class="fa-solid fa-trash-can"></i>
+                </button>
+              `}
+            </div>
           </td>
         </tr>
       `;
@@ -137,22 +218,44 @@ document.addEventListener("DOMContentLoaded", () => {
         try {
           const res = await fetch(`/api/users/${targetId}/role`, {
             method: "PUT",
-            headers: {
-              "Content-Type": "application/json",
-              "Authorization": `Bearer ${AuthGuard.getToken()}`
-            },
+            headers: { "Content-Type": "application/json", "Authorization": `Bearer ${AuthGuard.getToken()}` },
             body: JSON.stringify({ role: newRole })
           });
           const data = await res.json();
           if (!res.ok || !data.success) throw new Error(data.message);
-
           App.playSound("pop");
-          App.showToast("Role Updated", `User role saved in database as ${newRole}`, "success");
+          App.showToast("Role Updated", `User role saved as ${newRole}`, "success");
           loadUsers();
         } catch (err) {
-          alert(err.message || "Failed to update role");
+          App.showToast("Error", err.message || "Failed to update role", "danger");
           loadUsers();
         }
+      });
+    });
+
+    // Bind Edit Buttons
+    tableBody.querySelectorAll(".edit-user-btn").forEach(btn => {
+      btn.addEventListener("click", () => {
+        const targetId = parseInt(btn.getAttribute("data-user-id"), 10);
+        const u = allUsers.find(item => item.id === targetId);
+        if (!u) return;
+        document.getElementById("editUserId").value = u.id;
+        document.getElementById("editUserName").value = u.name;
+        document.getElementById("editUserDept").value = u.department;
+        document.getElementById("editUserTitle").value = u.title || "";
+        document.getElementById("editUserStatus").value = u.status || "Online";
+        document.getElementById("editUserRisk").value = u.retention_risk ?? 5.0;
+        editUserModal.classList.add("active");
+      });
+    });
+
+    // Bind Reset Password Buttons
+    tableBody.querySelectorAll(".reset-pw-btn").forEach(btn => {
+      btn.addEventListener("click", () => {
+        document.getElementById("resetPwUserId").value = btn.getAttribute("data-user-id");
+        document.getElementById("resetPwUserName").textContent = btn.getAttribute("data-user-name");
+        document.getElementById("resetPwInput").value = "";
+        resetPwModal.classList.add("active");
       });
     });
 
@@ -170,12 +273,11 @@ document.addEventListener("DOMContentLoaded", () => {
           });
           const data = await res.json();
           if (!res.ok || !data.success) throw new Error(data.message);
-
           App.playSound("success");
           App.showToast("User Deleted", `Account "${targetName}" removed from database`, "info");
           loadUsers();
         } catch (err) {
-          alert(err.message || "Failed to delete user");
+          App.showToast("Error", err.message || "Failed to delete user", "danger");
         }
       });
     });
@@ -194,22 +296,72 @@ document.addEventListener("DOMContentLoaded", () => {
     try {
       const res = await fetch("/api/users", {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          "Authorization": `Bearer ${AuthGuard.getToken()}`
-        },
+        headers: { "Content-Type": "application/json", "Authorization": `Bearer ${AuthGuard.getToken()}` },
         body: JSON.stringify({ name, email, title, department, role, password })
       });
       const data = await res.json();
       if (!res.ok || !data.success) throw new Error(data.message);
 
       App.playSound("success");
-      App.showToast("User Created", `Added ${name} (${role}) to database!`, "success");
-      addUserModal.style.display = "none";
+      App.showToast("User Created", `Added ${name} (${role}) to database`, "success");
+      addUserModal.classList.remove("active");
       document.getElementById("addUserForm").reset();
       loadUsers();
     } catch (err) {
-      alert(err.message || "Failed to create user account");
+      App.showToast("Creation Failed", err.message || "Failed to create user account", "danger");
+    }
+  });
+
+  // Handle Edit User Form Submission
+  document.getElementById("editUserForm")?.addEventListener("submit", async (e) => {
+    e.preventDefault();
+    const targetId = document.getElementById("editUserId").value;
+    const payload = {
+      name: document.getElementById("editUserName").value.trim(),
+      department: document.getElementById("editUserDept").value,
+      title: document.getElementById("editUserTitle").value.trim(),
+      status: document.getElementById("editUserStatus").value,
+      retention_risk: parseFloat(document.getElementById("editUserRisk").value) || 5.0
+    };
+
+    try {
+      const res = await fetch(`/api/users/${targetId}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json", "Authorization": `Bearer ${AuthGuard.getToken()}` },
+        body: JSON.stringify(payload)
+      });
+      const data = await res.json();
+      if (!res.ok || !data.success) throw new Error(data.message);
+
+      App.playSound("success");
+      App.showToast("User Updated", `Saved changes for ${payload.name}`, "success");
+      editUserModal.classList.remove("active");
+      loadUsers();
+    } catch (err) {
+      App.showToast("Update Failed", err.message || "Failed to update user", "danger");
+    }
+  });
+
+  // Handle Reset Password Form Submission
+  document.getElementById("resetPasswordForm")?.addEventListener("submit", async (e) => {
+    e.preventDefault();
+    const targetId = document.getElementById("resetPwUserId").value;
+    const password = document.getElementById("resetPwInput").value;
+
+    try {
+      const res = await fetch(`/api/users/${targetId}/password`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json", "Authorization": `Bearer ${AuthGuard.getToken()}` },
+        body: JSON.stringify({ password })
+      });
+      const data = await res.json();
+      if (!res.ok || !data.success) throw new Error(data.message);
+
+      App.playSound("success");
+      App.showToast("Password Updated", data.message || "New password saved to database", "success");
+      resetPwModal.classList.remove("active");
+    } catch (err) {
+      App.showToast("Failed", err.message || "Could not update password", "danger");
     }
   });
 

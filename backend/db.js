@@ -131,6 +131,12 @@ function initSchema() {
       priority TEXT NOT NULL DEFAULT 'normal', -- 'normal', 'urgent', 'critical'
       created_at DATETIME DEFAULT CURRENT_TIMESTAMP
     );
+
+    CREATE TABLE IF NOT EXISTS user_settings (
+      user_id INTEGER PRIMARY KEY REFERENCES users(id) ON DELETE CASCADE,
+      settings_json TEXT NOT NULL,
+      updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
+    );
   `);
 }
 
@@ -357,12 +363,57 @@ module.exports = {
     return this.findUserById(userId);
   },
 
+  updateUser(userId, fields) {
+    const allowed = ['name', 'email', 'role', 'department', 'title', 'status', 'retention_risk', 'avatar'];
+    const updates = [];
+    const values = [];
+    for (const key of allowed) {
+      if (fields[key] !== undefined && fields[key] !== null) {
+        updates.push(`${key} = ?`);
+        values.push(fields[key]);
+      }
+    }
+    if (updates.length === 0) return this.findUserById(userId);
+    values.push(userId);
+    db.prepare(`UPDATE users SET ${updates.join(', ')} WHERE id = ?`).run(...values);
+    return this.findUserById(userId);
+  },
+
+  updateUserPassword(userId, newPassword) {
+    const { hash, salt } = hashPassword(newPassword);
+    db.prepare('UPDATE users SET password_hash = ?, salt = ? WHERE id = ?').run(hash, salt, userId);
+    return true;
+  },
+
   deleteUser(userId) {
     return db.prepare('DELETE FROM users WHERE id = ?').run(userId);
   },
 
   listUsers() {
     return db.prepare('SELECT id, name, email, role, department, title, avatar, status, retention_risk, created_at FROM users ORDER BY name ASC').all();
+  },
+
+  // User Settings (Persistent per user across reloads/relogins)
+  getUserSettings(userId) {
+    const row = db.prepare('SELECT settings_json, updated_at FROM user_settings WHERE user_id = ?').get(userId);
+    if (!row) return null;
+    try {
+      return JSON.parse(row.settings_json);
+    } catch (e) {
+      return null;
+    }
+  },
+
+  saveUserSettings(userId, settingsObj) {
+    const json = JSON.stringify(settingsObj || {});
+    db.prepare(`
+      INSERT INTO user_settings (user_id, settings_json, updated_at)
+      VALUES (?, ?, CURRENT_TIMESTAMP)
+      ON CONFLICT(user_id) DO UPDATE SET
+        settings_json = excluded.settings_json,
+        updated_at = CURRENT_TIMESTAMP
+    `).run(userId, json);
+    return settingsObj;
   },
 
   // Sessions
@@ -400,6 +451,15 @@ module.exports = {
     `);
     const res = stmt.run(title, description, category, department, deadline, total_target);
     return db.prepare('SELECT * FROM surveys WHERE id = ?').get(res.lastInsertRowid);
+  },
+
+  updateSurveyStatus(surveyId, status) {
+    db.prepare('UPDATE surveys SET status = ? WHERE id = ?').run(status, surveyId);
+    return db.prepare('SELECT * FROM surveys WHERE id = ?').get(surveyId);
+  },
+
+  deleteSurvey(surveyId) {
+    return db.prepare('DELETE FROM surveys WHERE id = ?').run(surveyId);
   },
 
   saveSurveyResponse(surveyId, userId, rating, balanceScore, comments) {
@@ -468,11 +528,14 @@ module.exports = {
   getAdminStats() {
     const totalUsers = db.prepare('SELECT COUNT(*) as c FROM users').get().c;
     const adminCount = db.prepare("SELECT COUNT(*) as c FROM users WHERE role = 'admin'").get().c;
-    const employeeCount = db.prepare("SELECT COUNT(*) as c FROM users WHERE role = 'employee'").get().c;
+    const employeeCount = db.prepare("SELECT COUNT(*) as c FROM users WHERE role != 'admin'").get().c;
     const activeSurveys = db.prepare("SELECT COUNT(*) as c FROM surveys WHERE status = 'Active'").get().c;
+    const totalSurveys = db.prepare('SELECT COUNT(*) as c FROM surveys').get().c;
+    const totalSurveyResponses = db.prepare('SELECT COUNT(*) as c FROM survey_responses').get().c;
     const totalKudos = db.prepare('SELECT COUNT(*) as c FROM kudos').get().c;
     const totalMeetings = db.prepare('SELECT COUNT(*) as c FROM calendar_events').get().c;
     const totalAuditEvents = db.prepare('SELECT COUNT(*) as c FROM audit_logs').get().c;
+    const totalAnnouncements = db.prepare('SELECT COUNT(*) as c FROM system_announcements').get().c;
 
     const departmentBreakdown = db.prepare(`
       SELECT department, COUNT(*) as count FROM users GROUP BY department ORDER BY count DESC
@@ -485,9 +548,12 @@ module.exports = {
       adminCount,
       employeeCount,
       activeSurveys,
+      totalSurveys,
+      totalSurveyResponses,
       totalKudos,
       totalMeetings,
       totalAuditEvents,
+      totalAnnouncements,
       departmentBreakdown,
       recentAudits
     };
@@ -499,6 +565,10 @@ module.exports = {
       INSERT INTO system_announcements (author_id, title, message, priority)
       VALUES (?, ?, ?, ?)
     `).run(authorId, title, message, priority);
+  },
+
+  deleteAnnouncement(id) {
+    return db.prepare('DELETE FROM system_announcements WHERE id = ?').run(id);
   },
 
   listAnnouncements() {

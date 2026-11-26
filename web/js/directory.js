@@ -7,8 +7,31 @@
 const Directory = (function () {
   let employees = [];
 
-  function init() {
-    employees = [...SampleData.employees];
+  async function init() {
+    try {
+      const res = await fetch("/api/users");
+      const data = await res.json();
+      if (res.ok && data.success && Array.isArray(data.users) && data.users.length > 0) {
+        employees = data.users.map((u) => {
+          const riskVal = Number(u.retention_risk ?? 5);
+          const riskLabel = riskVal >= 7 ? "High" : riskVal >= 5 ? "Medium" : "Low";
+          return {
+            id: u.id,
+            name: u.name,
+            role: u.title || u.role,
+            department: u.department || "General",
+            avatar: u.avatar || "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=120&auto=format&fit=crop&q=80",
+            score: Math.max(55, Math.min(98, Math.round(100 - riskVal * 2.2))),
+            risk: riskLabel,
+            lastOneOnOne: u.status || "Online"
+          };
+        });
+      } else {
+        employees = [...(typeof SampleData !== "undefined" ? SampleData.employees : [])];
+      }
+    } catch (e) {
+      employees = [...(typeof SampleData !== "undefined" ? SampleData.employees : [])];
+    }
     renderDirectoryTable();
     setupFilters();
   }
