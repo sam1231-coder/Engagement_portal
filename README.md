@@ -22,7 +22,7 @@ The employee workspace provides real-time organizational pulse metrics (eNPS, En
 
 The Executive Control Center enables administrators to monitor database workforce counts, manage review campaigns, broadcast company-wide announcements, inspect department headcount distribution, and track live security and employee activity audit logs.
 
-## Core Capabilities and Features
+Core Capabilities and Features
 
 Authentication, RBAC, and Session Security
 
@@ -49,7 +49,7 @@ Employee Engagement and Productivity Modules
 - Team Directory: Live workforce directory synchronized with the SQLite database, supporting department and retention-risk filtering.
 - Persistent Per-User Settings: Color mode (Dark or Light), theme accent color, compact UI density, reduced motion, audio synthesizer, toast notifications, sidebar auto-collapse, weekly digest preference, and default landing page are stored per user in SQLite and persist across reloads and logins. Employees may update their own availability status and password, while name, job title, and department edits are reserved for Administrators.
 
-## Repository Architecture
+Repository Architecture
 
 humanly/
 ├── .github/
