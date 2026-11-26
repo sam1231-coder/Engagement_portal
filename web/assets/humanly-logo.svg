@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" fill="none">
+  <defs>
+    <linearGradient id="hmnBg" x1="6" y1="6" x2="58" y2="58" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#0b3b60"/>
+      <stop offset="100%" stop-color="#167d8d"/>
+    </linearGradient>
+    <linearGradient id="hmnArc" x1="16" y1="22" x2="48" y2="42" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#60c1e5"/>
+      <stop offset="100%" stop-color="#a0e0ef"/>
+    </linearGradient>
+  </defs>
+  <rect x="2" y="2" width="60" height="60" rx="16" fill="url(#hmnBg)"/>
+  <rect x="2.75" y="2.75" width="58.5" height="58.5" rx="15.25" stroke="#60c1e5" stroke-opacity="0.35" stroke-width="1.5"/>
+  <!-- Left & Right Human Pillars forming H -->
+  <circle cx="20" cy="18.5" r="4" fill="#a0e0ef"/>
+  <path d="M20 25.5V45.5" stroke="#f0f9fc" stroke-width="5.2" stroke-linecap="round"/>
+  <circle cx="44" cy="18.5" r="4" fill="#a0e0ef"/>
+  <path d="M44 25.5V45.5" stroke="#f0f9fc" stroke-width="5.2" stroke-linecap="round"/>
+  <!-- Connecting Engagement Pulse Bridge -->
+  <path d="M20 34.5C25.5 34.5 27 29.5 32 29.5C37 29.5 38.5 34.5 44 34.5" stroke="url(#hmnArc)" stroke-width="4.4" stroke-linecap="round" stroke-linejoin="round"/>
+</svg>

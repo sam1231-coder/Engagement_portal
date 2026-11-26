@@ -2264,3 +2264,20 @@ h3, .card-title {
   opacity: 1;
   transform: translateX(0);
 }
+
+/* Humanly Brand SVG Logo */
+.brand-icon:has(.humanly-logo-img),
+.auth-glass-icon:has(.humanly-logo-img) {
+  background: transparent !important;
+  border: none !important;
+  padding: 0;
+  overflow: hidden;
+}
+
+.humanly-logo-img {
+  width: 100%;
+  height: 100%;
+  display: block;
+  object-fit: contain;
+  border-radius: inherit;
+}
